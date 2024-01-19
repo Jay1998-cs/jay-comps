@@ -1,4 +1,14 @@
-import React, { createRef, forwardRef, useContext } from "react";
+import React, {
+  createRef,
+  forwardRef,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import classNames from "classnames";
+import omit from "rc-util/lib/omit";
+import { composeRef } from "rc-util/lib/ref";
 
 import type {
   ButtonType,
@@ -7,8 +17,10 @@ import type {
   SizeType,
 } from "./buttonTypes";
 import { ConfigContext } from "../config-provider/context";
-import { composeRef } from "rc-util/lib/ref";
 import { DisabledContext } from "../config-provider/DisabledContext";
+import useSize from "../config-provider/hooks/useSize";
+import IconWrapper from "./IconWrapper";
+import LoadingIcon from "./LoadingIcon";
 
 export interface BaseButtonProps {
   type?: ButtonType;
@@ -73,6 +85,10 @@ function getLoadingConfig(
   };
 }
 
+function isUnBorderedButtonType(type?: ButtonType) {
+  return type === "text" || type === "link";
+}
+
 const InternalButton: React.ForwardRefRenderFunction<
   HTMLButtonElement | HTMLAnchorElement,
   ButtonProps
@@ -83,7 +99,7 @@ const InternalButton: React.ForwardRefRenderFunction<
     type = "default",
     danger,
     shape = "default",
-    size = "middle",
+    size: customSize,
     styles,
     disabled: customDisabled,
     className,
@@ -98,7 +114,7 @@ const InternalButton: React.ForwardRefRenderFunction<
     ...rest
   } = props;
 
-  const { getPrefixCls, button } = useContext(ConfigContext);
+  const { getPrefixCls, button, direction } = useContext(ConfigContext);
   const prefixCls = getPrefixCls("btn", customPrefixCls); // ant-btn
 
   const internalRef = createRef<HTMLButtonElement | HTMLAnchorElement>();
@@ -107,7 +123,138 @@ const InternalButton: React.ForwardRefRenderFunction<
   const disabled = useContext(DisabledContext);
   const mergedDisabled = disabled ?? customDisabled;
 
-  return <button>text</button>;
+  const sizeClassNameMap = { large: "lg", small: "sm", middle: undefined };
+  const sizeFullName = useSize((ctxSize) => customSize ?? ctxSize);
+  const sizeCls = sizeFullName ? sizeClassNameMap[sizeFullName] || "" : "";
+
+  const loadingOrDelay = useMemo<LoadingConfigType>(
+    () => getLoadingConfig(loading),
+    [loading]
+  );
+  const [innerLoading, setLoading] = useState<boolean>(loadingOrDelay.loading);
+
+  const iconType = innerLoading ? "loading" : icon;
+
+  const linkButtonRestProps = omit(rest as ButtonProps & { navigate: any }, [
+    "navigate",
+  ]);
+
+  useEffect(() => {
+    let delayTimer: ReturnType<typeof setTimeout> | null = null;
+    if (loadingOrDelay.delay > 0) {
+      delayTimer = setTimeout(() => {
+        delayTimer = null;
+        setLoading(true);
+      }, loadingOrDelay.delay);
+    } else {
+      setLoading(loadingOrDelay.loading);
+    }
+
+    return () => {
+      if (delayTimer) {
+        clearTimeout(delayTimer);
+        delayTimer = null;
+      }
+    };
+  }, [loadingOrDelay]);
+
+  const handleClick = (
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement, MouseEvent>
+  ) => {
+    const { onClick } = props;
+    if (mergedDisabled) {
+      e.preventDefault();
+      return;
+    }
+
+    (
+      onClick as React.MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>
+    )?.(e);
+  };
+
+  const classes = classNames(
+    prefixCls,
+    className,
+    rootClassName,
+    button?.className,
+    {
+      [`${prefixCls}-${shape}`]: shape !== "default" && shape,
+      [`${prefixCls}-${type}`]: type,
+      [`${prefixCls}-${sizeCls}`]: sizeCls,
+      [`${prefixCls}-icon-only`]: !children && children !== 0 && !!iconType,
+      [`${prefixCls}-background-ghost`]: ghost && !isUnBorderedButtonType(type),
+      [`${prefixCls}-loading`]: innerLoading,
+      [`${prefixCls}-block`]: block,
+      [`${prefixCls}-danger`]: !!danger,
+      [`${prefixCls}-direction`]: direction === "rtl",
+    }
+  );
+
+  const fullStyle: React.CSSProperties = { ...button?.style, ...customStyle };
+
+  const kids = children || null;
+
+  const iconClass = classNames(
+    customClassNames?.icon,
+    button?.classNames?.icon
+  );
+  const iconStyle: React.CSSProperties = {
+    ...(styles?.icon || {}),
+    ...(button?.styles?.icon || {}),
+  };
+
+  const iconNode =
+    icon && !innerLoading ? (
+      <IconWrapper
+        prefixCls={prefixCls}
+        className={iconClass}
+        style={iconStyle}
+      >
+        {icon}
+      </IconWrapper>
+    ) : (
+      <LoadingIcon
+        existIcon={!!icon}
+        prefixCls={prefixCls}
+        loading={!!innerLoading}
+      />
+    );
+
+  if (linkButtonRestProps.href !== undefined) {
+    return (
+      <a
+        className={classNames(classes, {
+          [`${prefixCls}-disabled`]: mergedDisabled,
+        })}
+        {...linkButtonRestProps}
+        href={mergedDisabled ? undefined : linkButtonRestProps.href}
+        style={fullStyle}
+        ref={buttonRef as React.Ref<HTMLAnchorElement>}
+        tabIndex={mergedDisabled ? -1 : 0}
+        onClick={handleClick}
+      >
+        {iconNode}
+        {kids}
+      </a>
+    );
+  }
+
+  let buttonNode = (
+    <button
+      {...rest}
+      type={htmlType}
+      className={classes}
+      style={fullStyle}
+      disabled={mergedDisabled}
+      ref={buttonRef as React.Ref<HTMLButtonElement>}
+      onClick={handleClick}
+    >
+      {iconNode}
+      {kids}
+    </button>
+  );
+
+  return buttonNode;
 };
 
 const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
