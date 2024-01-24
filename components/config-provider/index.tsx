@@ -1,6 +1,10 @@
 import React from "react";
 
-import type { ThemeConfig, DirectionType } from "./context";
+import type {
+  ThemeConfig,
+  DirectionType,
+  defaultIconPrefixCls,
+} from "./context";
 import useTheme from "./hooks/useTheme";
 import { DesignTokenContext, defaultSeedToken } from "../theme/context";
 import { ConfigConsumerProps, ConfigConsumer, ConfigContext } from "./context";
@@ -88,3 +92,12 @@ const ConfigProvider: React.FC<ConfigProviderProps> = (props) => {
 };
 
 export default ConfigProvider;
+
+export {
+  ConfigConsumer,
+  ConfigContext,
+  defaultIconPrefixCls,
+  type ThemeConfig,
+  type ConfigConsumerProps,
+  type DirectionType,
+};

@@ -73,3 +73,7 @@ __image_snapshots__/
 
 # development document
 docs
+
+# static
+public
+dev-components

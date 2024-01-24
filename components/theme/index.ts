@@ -1,10 +1,9 @@
 import useToken from "./useToken";
-
-// function useToken() {
-//   const [theme, token, hashId] = useInternalToken();
-//   return {theme, token, hashId}
-// }
+import { defaultConfig } from "./context";
 
 export default {
+  defaultConfig,
+  defalultSeed: defaultConfig.token,
+
   useToken,
 };
