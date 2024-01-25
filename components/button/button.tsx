@@ -21,6 +21,17 @@ import { DisabledContext } from "../config-provider/DisabledContext";
 import useSize from "../config-provider/hooks/useSize";
 import IconWrapper from "./IconWrapper";
 import LoadingIcon from "./LoadingIcon";
+import useStyle from "./style";
+
+function log(data: any, color: 0 | 1 | 2 = 0) {
+  if (color === 1) {
+    console.log("\u001b[32m" + data);
+  } else if (color === 2) {
+    console.log("\u001b[35m" + data);
+  } else {
+    console.log("\u001b[34m" + data);
+  }
+}
 
 export interface BaseButtonProps {
   type?: ButtonType;
@@ -41,6 +52,7 @@ export interface BaseButtonProps {
   styles?: { icon: React.CSSProperties };
 }
 
+// 合并类型定义，并去除type属性类型
 type MergedHTMLAttributes = Omit<
   React.HTMLAttributes<HTMLElement> &
     React.ButtonHTMLAttributes<HTMLElement> &
@@ -115,7 +127,10 @@ const InternalButton: React.ForwardRefRenderFunction<
   } = props;
 
   const { getPrefixCls, button, direction } = useContext(ConfigContext);
-  const prefixCls = getPrefixCls("btn", customPrefixCls); // ant-btn
+  const prefixCls = getPrefixCls("btn", customPrefixCls); // jay-btn
+
+  const [WrapCSSVar, hashId] = useStyle(prefixCls);
+  log("hashId: " + hashId);
 
   const internalRef = createRef<HTMLButtonElement | HTMLAnchorElement>();
   const buttonRef = composeRef(ref, internalRef); // ref.current | internalRef.current
@@ -174,6 +189,7 @@ const InternalButton: React.ForwardRefRenderFunction<
 
   const classes = classNames(
     prefixCls,
+    hashId,
     className,
     rootClassName,
     button?.className,
@@ -192,7 +208,7 @@ const InternalButton: React.ForwardRefRenderFunction<
 
   const fullStyle: React.CSSProperties = { ...button?.style, ...customStyle };
 
-  const kids = children || null;
+  const kids = children || null; // button的直接后代(数组类型)
 
   const iconClass = classNames(
     customClassNames?.icon,
@@ -203,6 +219,7 @@ const InternalButton: React.ForwardRefRenderFunction<
     ...(button?.styles?.icon || {}),
   };
 
+  // 封装icon容器，若没有设置icon，则封装LoadingIcon容器，用于添加加载动画
   const iconNode =
     icon && !innerLoading ? (
       <IconWrapper
@@ -220,6 +237,7 @@ const InternalButton: React.ForwardRefRenderFunction<
       />
     );
 
+  // 封装为Link Button
   if (linkButtonRestProps.href !== undefined) {
     return (
       <a
@@ -239,6 +257,7 @@ const InternalButton: React.ForwardRefRenderFunction<
     );
   }
 
+  // 基础Button节点
   let buttonNode = (
     <button
       {...rest}
@@ -253,6 +272,11 @@ const InternalButton: React.ForwardRefRenderFunction<
       {kids}
     </button>
   );
+
+  // 返回注入CSS样式的节点
+  if (typeof WrapCSSVar === "function") {
+    return WrapCSSVar(buttonNode);
+  }
 
   return buttonNode;
 };

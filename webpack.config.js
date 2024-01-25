@@ -30,7 +30,7 @@ const getStyleLoader = (pre) => {
 
 // webpack配置
 module.exports = {
-  entry: "./dev-components/index.js",
+  entry: "./dev-components/index.js", // 打包时: index.js
 
   output: {
     path: isProduction ? path.resolve(__dirname, "./dist") : undefined, // 项目打包输出路径
@@ -84,7 +84,10 @@ module.exports = {
       // js和jsx
       {
         test: /\.[jt]sx?$/, //test: /\.jsx?$/,
-        include: path.resolve(__dirname, "../src"),
+        include: [
+          path.resolve(__dirname, "./components"),
+          path.resolve(__dirname, "./dev-components"),
+        ], // 解析路径
         loader: "babel-loader",
         options: {
           cacheDirectory: true,

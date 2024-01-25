@@ -77,3 +77,7 @@ docs
 # static
 public
 dev-components
+**/dev-components
+
+# else
+.eslintignore

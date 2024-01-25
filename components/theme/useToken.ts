@@ -35,7 +35,7 @@ export default function useToken(): [theme: any, hashId: string] {
   // 合并token
   const mergedToken: mergedTokenType = React.useMemo(
     () => Object.assign({}, defaultSeedToken, rootDesignToken) as any,
-    [defaultSeedToken, rootDesignToken]
+    [rootDesignToken]
   );
   // 生成token的标识符
   const tokenKey = token2key(mergedToken);

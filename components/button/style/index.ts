@@ -5,14 +5,15 @@ function genButtonStyle(token: any) {
 
   return {
     [`${componentCls}`]: {
-      border: "1px solid #000",
-      background: "#fff",
-      color: token.colorPrimary,
+      border: "none",
+      background: token.colorPrimary,
+      color: "#fff",
       borderRadius: token.borderRadius,
     },
   };
 }
 
+// useStyle Hook
 const useStyle = genComponentStyleHook("Button", (token) => {
   return [genButtonStyle(token)];
 });
