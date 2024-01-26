@@ -1,6 +1,7 @@
 import genComponentStyleHook from "../../theme/util/genComponentStyleHook";
 
 function genButtonStyle(token: any) {
+  // {componentCls: '.jay-btn', colorPrimary: '#1677ff', borderRadius: 6, _tokenKey: 'ujoqht'}
   const { componentCls } = token;
 
   return {
