@@ -69,22 +69,33 @@ function getContainer(): HTMLElement {
 }
 
 // 获取所有style元素
-function findStyles(container: ContainerType) {
+export function findStyles(container: ContainerType) {
   return Array.from(container.children).filter(
     (node) => node.tagName.toLowerCase() === "style"
   ) as HTMLStyleElement[];
 }
 
-// 获取key对应的HTML元素(节点)
-function findExistNode(key: string) {
+// 获取key对应的style节点
+export function findStyleNode(key: string) {
   const container = getContainer();
   return findStyles(container).find(
     (node) => node.getAttribute(attributeName) === key
   );
 }
 
+// 移除key对应的style节点
+export function removeStyleNode(key: string) {
+  const container = getContainer();
+  findStyles(container).forEach((styleNode) => {
+    if (styleNode.getAttribute(attributeName) === key) {
+      container.removeChild(styleNode);
+      console.error("############ 移除style标签" + key);
+    }
+  });
+}
+
 // 创建style节点并注入CSS样式
-function injectCSS(css: string) {
+export function injectCSS(css: string) {
   const styleNode = document.createElement("style");
   styleNode.innerHTML = css;
   const container = getContainer();
@@ -95,15 +106,18 @@ function injectCSS(css: string) {
 // 获取已存在的style节点，没有则创建新节点，并且注入最新CSS样式
 export function updateCSS(css: string, key: string) {
   // 若样式节点已存在，且样式已更新，则更新样式节点
-  const existNode = findExistNode(key);
-  if (existNode) {
-    if (existNode.innerHTML !== css) existNode.innerHTML = css;
+  const existStyleNode = findStyleNode(key);
+  if (existStyleNode) {
+    if (existStyleNode.innerHTML !== css) {
+      existStyleNode.innerHTML = css;
+      console.error("####### 更新样式");
+    }
     return;
   }
   // 样式节点不存在，创建样式节点并注入CSS样式字符串
   const newStyleNode = injectCSS(css);
   // 为样式节点设置标识属性
   newStyleNode.setAttribute(attributeName, key);
-
+  console.warn("插入style标签 ########");
   return newStyleNode;
 }

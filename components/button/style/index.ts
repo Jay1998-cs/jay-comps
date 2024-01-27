@@ -14,7 +14,7 @@ function genButtonStyle(token: any) {
   };
 }
 
-// useStyle Hook
+// genComponentStyleHook() return function named useStyle()
 const useStyle = genComponentStyleHook("Button", (token) => {
   return [genButtonStyle(token)];
 });
