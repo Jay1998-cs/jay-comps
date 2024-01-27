@@ -11,20 +11,23 @@ export default function genComponentStyleHook(
 ) {
   // real useStyle()
   return (prefixCls: string) => {
-    const [token, hashId] = useToken();
+    const [token, hashId, tokenKey] = useToken(component);
 
-    const injectCSS = useStyleRegister(
-      {
-        token,
-        path: [component, prefixCls],
-        hashId,
-      },
-      () => {
-        const componentCls = `.${prefixCls}`;
-        return styleFn(Object.assign({ componentCls }, token));
-      }
-    );
+    const info = {
+      token,
+      tokenKey,
+      path: [component, prefixCls],
+      hashId,
+    };
 
-    return [injectCSS, hashId];
+    const genStyleObjFn = () => {
+      // { componentCls: '.jay-btn', colorPrimary: '#1677ff', ... }
+      const componentCls = `.${prefixCls}`;
+      return styleFn(Object.assign({ componentCls }, token)); // 闭包，引用token
+    };
+
+    const wrapCSSVar = useStyleRegister(info, genStyleObjFn);
+
+    return [wrapCSSVar, hashId];
   };
 }

@@ -1,5 +1,3 @@
-import emotionHash from "@emotion/hash";
-
 export interface ParseConfig {
   hashId?: string;
   path?: string;
@@ -58,11 +56,6 @@ export function parseStyle(
   return styleStr;
 }
 
-// 根据path和样式字符串styleStr，生成哈希标识符
-export function uniqueHash(path: (string | number)[], styleStr: string) {
-  return emotionHash(`${path.join("%")}${styleStr}`);
-}
-
 // 获取页面head或body标签
 function getContainer(): HTMLElement {
   return document.querySelector("head") || document.body;
@@ -89,7 +82,6 @@ export function removeStyleNode(key: string) {
   findStyles(container).forEach((styleNode) => {
     if (styleNode.getAttribute(attributeName) === key) {
       container.removeChild(styleNode);
-      console.error("############ 移除style标签" + key);
     }
   });
 }
@@ -110,7 +102,6 @@ export function updateCSS(css: string, key: string) {
   if (existStyleNode) {
     if (existStyleNode.innerHTML !== css) {
       existStyleNode.innerHTML = css;
-      console.error("####### 更新样式");
     }
     return;
   }
@@ -118,6 +109,5 @@ export function updateCSS(css: string, key: string) {
   const newStyleNode = injectCSS(css);
   // 为样式节点设置标识属性
   newStyleNode.setAttribute(attributeName, key);
-  console.warn("插入style标签 ########");
   return newStyleNode;
 }

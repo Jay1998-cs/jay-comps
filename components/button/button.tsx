@@ -23,16 +23,6 @@ import IconWrapper from "./IconWrapper";
 import LoadingIcon from "./LoadingIcon";
 import useStyle from "./style";
 
-function log(data: any, color: 0 | 1 | 2 = 0) {
-  if (color === 1) {
-    console.log("\u001b[32m" + data);
-  } else if (color === 2) {
-    console.log("\u001b[35m" + data);
-  } else {
-    console.log("\u001b[34m" + data);
-  }
-}
-
 export interface BaseButtonProps {
   type?: ButtonType;
   icon?: React.ReactNode;
@@ -64,14 +54,6 @@ export interface ButtonProps extends BaseButtonProps, MergedHTMLAttributes {
   href?: string;
   htmlType?: ButtonHTMLType;
 }
-
-// type CompoundedComponent = React.ForwardRefExoticComponent<
-//   ButtonProps & React.RefAttributes<HTMLElement>
-// > & {
-//   Group: typeof Group;
-//   /** @internal */
-//   __ANT_BUTTON: boolean;
-// };
 
 type LoadingConfigType = {
   loading: boolean;
@@ -130,7 +112,6 @@ const InternalButton: React.ForwardRefRenderFunction<
   const prefixCls = getPrefixCls("btn", customPrefixCls); // jay-btn
 
   const [WrapCSSVar, hashId] = useStyle(prefixCls);
-  log("hashId: " + hashId);
 
   const internalRef = createRef<HTMLButtonElement | HTMLAnchorElement>();
   const buttonRef = composeRef(ref, internalRef); // ref.current | internalRef.current

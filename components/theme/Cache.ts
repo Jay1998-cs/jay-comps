@@ -1,12 +1,13 @@
 export type KeyType = string | number;
-type ValueType = [number, any]; // [times, realValue]
+export type ValueType = [number, any]; // [times, realValue]
+export type ValueFnType = (origin: ValueType | null) => ValueType | null;
 
 const SPLIT = "%";
 
 /**
  * @description connect key with 'SPLIT'
  */
-export function pathKey(keys: KeyType[]) {
+export function genPathKey(keys: KeyType[]) {
   return keys.join(SPLIT ?? "%");
 }
 
@@ -23,23 +24,21 @@ class CacheEntity {
   /** @private internal cache map, do not access directlt */
   private cache = new Map<string, ValueType>();
 
-  opGet(keyPathStr: string): ValueType | null {
+  private opGet(keyPathStr: string): ValueType | null {
     return this.cache.get(keyPathStr) || null;
   }
 
   get(keys: KeyType[]): ValueType | null {
-    return this.opGet(pathKey(keys));
+    return this.opGet(genPathKey(keys));
   }
 
-  opUpdate(
-    keyPathStr: string,
-    valueFn: (origin: ValueType | null) => ValueType | null
-  ) {
+  private opUpdate(keyPathStr: string, valueFn: ValueFnType) {
     const prevValue = this.cache.get(keyPathStr)!;
     const nextValue = valueFn(prevValue);
 
     if (nextValue === null) {
       this.cache.delete(keyPathStr);
+      console.error("删除缓存：", this.cache);
     } else {
       this.cache.set(keyPathStr, nextValue);
     }
@@ -49,7 +48,7 @@ class CacheEntity {
     keys: KeyType[],
     valueFn: (origin: ValueType | null) => ValueType | null
   ) {
-    return this.opUpdate(pathKey(keys), valueFn);
+    return this.opUpdate(genPathKey(keys), valueFn);
   }
 }
 

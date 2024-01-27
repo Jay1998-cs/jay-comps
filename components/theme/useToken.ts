@@ -21,26 +21,28 @@ function flattenTokenToStr(token: any): string {
 }
 
 // 根据token对象生成哈希值字符串
-function token2key(token: any, salt?: string): string {
-  return emotionHash(`${salt || ""}_${flattenTokenToStr(token)}`);
+function token2key(token: any, component: string): string {
+  const tokenStr = flattenTokenToStr(token);
+  const str = `${tokenStr}_${component}`;
+  return emotionHash(str);
 }
 
 // 类型声明
-export type mergedTokenType = typeof defaultSeedToken & { _tokenKey?: string };
+type TokenInfoType = [theme: any, hashId: string, tokenKey: string];
 
 // useToken()
-export default function useToken(): [theme: any, hashId: string] {
+export default function useToken(component: string): TokenInfoType {
   // 获取上层token
   const { token: rootDesignToken } = React.useContext(DesignTokenContext);
   // 合并token
-  const mergedToken: mergedTokenType = React.useMemo(
+  const mergedToken = React.useMemo(
     () => Object.assign({}, defaultSeedToken, rootDesignToken) as any,
     [rootDesignToken]
   );
   // 生成token的标识符
-  const tokenKey = token2key(mergedToken);
-  mergedToken._tokenKey = tokenKey;
-  const hashId = `css-dev-only-do-not-override-${emotionHash(tokenKey)}`;
+  const tokenKey = token2key(mergedToken, component);
+  // 组件的style标签的选择器名称
+  const hashId = `css-dev-only-do-not-override-${tokenKey}`;
 
-  return [mergedToken, hashId ? hashId : ""];
+  return [mergedToken, hashId ? hashId : "", tokenKey];
 }
