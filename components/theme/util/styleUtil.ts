@@ -102,7 +102,9 @@ export function updateCSS(css: string, key: string) {
   if (existStyleNode) {
     if (existStyleNode.innerHTML !== css) {
       existStyleNode.innerHTML = css;
+      console.error("============ 已存在该style标签,但CSS不同、已更新CSS");
     }
+    console.error("============ 已存在该style标签且CSS相同");
     return;
   }
   // 样式节点不存在，创建样式节点并注入CSS样式字符串

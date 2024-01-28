@@ -15,8 +15,7 @@ export default function genComponentStyleHook(
 
     const info = {
       token,
-      tokenKey,
-      path: [component, prefixCls],
+      path: [tokenKey, component, prefixCls],
       hashId,
     };
 

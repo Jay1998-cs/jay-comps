@@ -38,7 +38,6 @@ class CacheEntity {
 
     if (nextValue === null) {
       this.cache.delete(keyPathStr);
-      console.error("删除缓存：", this.cache);
     } else {
       this.cache.set(keyPathStr, nextValue);
     }
