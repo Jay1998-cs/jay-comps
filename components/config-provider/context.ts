@@ -64,5 +64,4 @@ export const ConfigContext = React.createContext<ConfigConsumerProps>({
   iconPrefixCls: defaultIconPrefixCls, // icon的ClassName默认前缀，jayicon
 });
 
-// 导出 ConfigContext.Consumer 组件
-export const { Consumer: ConfigConsumer } = ConfigContext;
+export const ConfigConsumer = ConfigContext.Consumer;

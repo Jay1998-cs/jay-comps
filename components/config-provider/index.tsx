@@ -35,7 +35,7 @@ const ProdviderChildren: React.FC<ProdiverChildrenProps> = (props) => {
       const mergedPrefixCls = prefixCls || parentContext.getPrefixCls("");
       return suffixCls ? `${mergedPrefixCls}-${suffixCls}` : mergedPrefixCls;
     },
-    [parentContext.getPrefixCls, prefixCls]
+    [parentContext, prefixCls]
   );
 
   // 获取主题对象，包含token属性，即样式配置对象

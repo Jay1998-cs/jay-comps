@@ -11,12 +11,12 @@ export default function genComponentStyleHook(
 ) {
   // real useStyle()
   return (prefixCls: string) => {
-    const [token, hashId, tokenKey] = useToken(component);
+    const [token, cssSelectorCls, tokenKey] = useToken(component);
 
     const info = {
       token,
       path: [tokenKey, component, prefixCls],
-      hashId,
+      cssSelectorCls,
     };
 
     const genStyleObjFn = () => {
@@ -27,6 +27,7 @@ export default function genComponentStyleHook(
 
     const wrapCSSVar = useStyleRegister(info, genStyleObjFn);
 
-    return [wrapCSSVar, hashId];
+    // 返回包裹node用于注入CSS的函数组件wrapCSSVar，以及node的样式类名cssSelectorCls
+    return [wrapCSSVar, cssSelectorCls];
   };
 }

@@ -1,13 +1,18 @@
 import React from "react";
 import { SeedToken } from "./seedToken";
 
-// #### 待改，直接使用 SeedToken
-type TokenType = Partial<SeedToken>;
+type TokenAdditionType = {
+  padding: string;
+};
 
-// SeedToken 默认配置
+// ### 待改，直接使用 SeedToken
+type TokenType = Partial<SeedToken & TokenAdditionType>;
+
+// SeedToken 默认样式配置对象
 export const defaultSeedToken: TokenType = {
   colorPrimary: "#1677ff",
   borderRadius: 6,
+  padding: "4px 16px",
 };
 
 // token context 的默认配置

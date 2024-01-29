@@ -111,7 +111,7 @@ const InternalButton: React.ForwardRefRenderFunction<
   const { getPrefixCls, button, direction } = useContext(ConfigContext);
   const prefixCls = getPrefixCls("btn", customPrefixCls); // jay-btn
 
-  const [WrapCSSVar, hashId] = useStyle(prefixCls);
+  const [WrapCSSVar, cssSelectorCls] = useStyle(prefixCls);
 
   const internalRef = createRef<HTMLButtonElement | HTMLAnchorElement>();
   const buttonRef = composeRef(ref, internalRef); // ref.current | internalRef.current
@@ -170,7 +170,7 @@ const InternalButton: React.ForwardRefRenderFunction<
 
   const classes = classNames(
     prefixCls,
-    hashId,
+    cssSelectorCls,
     className,
     rootClassName,
     button?.className,

@@ -1,5 +1,5 @@
 export interface ParseConfig {
-  hashId?: string;
+  cssSelectorCls?: string;
   path?: string;
 }
 
@@ -8,10 +8,10 @@ export type ContainerType = Element | ShadowRoot;
 export const attributeName = "data-css-hash";
 
 // 返回CSS样式选择器，形如，keyStr:where(selector)
-export function injectHashSelector(key: string, hashId: string) {
-  if (!hashId) return key;
+export function injectHashSelector(key: string, cssSelectorCls: string) {
+  if (!cssSelectorCls) return key;
 
-  const hashClassName = `.${hashId}`;
+  const hashClassName = `.${cssSelectorCls}`;
   const selector = `:where(${hashClassName})`;
 
   return `${key}${selector}`;
@@ -23,7 +23,7 @@ export function parseStyle(
   config: ParseConfig = {},
   root: boolean = true
 ): string {
-  const { hashId = "" } = config;
+  const { cssSelectorCls = "" } = config;
   let styleStr = "";
 
   interpolation.forEach((originStyle) => {
@@ -33,7 +33,7 @@ export function parseStyle(
       Object.keys(originStyle).forEach((key) => {
         const val = originStyle[key];
         if (typeof val === "object") {
-          const mergedKey = injectHashSelector(key, hashId);
+          const mergedKey = injectHashSelector(key, cssSelectorCls);
           const parsedStr = parseStyle([val], config, false);
           styleStr += `${mergedKey}${parsedStr}`;
         } else {
@@ -77,10 +77,11 @@ export function findStyleNode(key: string) {
 }
 
 // 移除key对应的style节点
-export function removeStyleNode(key: string) {
+export function removeStyleNode(key: string, data: any) {
   const container = getContainer();
   findStyles(container).forEach((styleNode) => {
     if (styleNode.getAttribute(attributeName) === key) {
+      console.error("**移除style标签:", styleNode, data ?? data);
       container.removeChild(styleNode);
     }
   });
@@ -92,6 +93,7 @@ export function injectCSS(css: string) {
   styleNode.innerHTML = css;
   const container = getContainer();
   container.appendChild(styleNode);
+
   return styleNode;
 }
 
@@ -102,9 +104,9 @@ export function updateCSS(css: string, key: string) {
   if (existStyleNode) {
     if (existStyleNode.innerHTML !== css) {
       existStyleNode.innerHTML = css;
-      console.error("============ 已存在该style标签,但CSS不同、已更新CSS");
+      console.error("==> 已存在该style标签,但CSS不同、已更新CSS");
     }
-    console.error("============ 已存在该style标签且CSS相同");
+    console.error("==> 已存在该style标签且CSS相同");
     return;
   }
   // 样式节点不存在，创建样式节点并注入CSS样式字符串

@@ -28,21 +28,25 @@ function token2key(token: any, component: string): string {
 }
 
 // 类型声明
-type TokenInfoType = [theme: any, hashId: string, tokenKey: string];
+type TokenInfoType = [theme: any, cssSelectorCls: string, tokenKey: string];
 
-// useToken()
+/**
+ *
+ * @param component 组件名(string), 如'Button'
+ * @returns 返回组件的样式配置对象token，它合并了默认和上层(最近祖先)的token
+ */
 export default function useToken(component: string): TokenInfoType {
   // 获取上层token
   const { token: rootDesignToken } = React.useContext(DesignTokenContext);
-  // 合并token
+  // 合并默认和上层token
   const mergedToken = React.useMemo(
     () => Object.assign({}, defaultSeedToken, rootDesignToken) as any,
     [rootDesignToken]
   );
-  // 生成token的标识符
+  // 生成tokenKey，用于标识组件的CSS选择器和生成style标签的id
   const tokenKey = token2key(mergedToken, component);
-  // 组件的style标签的选择器名称
-  const hashId = `css-dev-only-do-not-override-${tokenKey}`;
+  // 组件对应style标签的选择器名称
+  const cssSelectorCls = `css-dev-only-do-not-override-${tokenKey}`;
 
-  return [mergedToken, hashId ? hashId : "", tokenKey];
+  return [mergedToken, cssSelectorCls ? cssSelectorCls : "", tokenKey];
 }
