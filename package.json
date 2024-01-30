@@ -18,6 +18,7 @@
   "author": "jaylee",
   "license": "ISC",
   "devDependencies": {
+    "@ant-design/icons": "^5.2.6",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.11",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.2.0",
@@ -63,7 +64,6 @@
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.2.6",
     "@babel/core": "^7.23.7",
     "@babel/preset-env": "^7.23.8",
     "@babel/preset-react": "^7.23.3",
