@@ -66,13 +66,13 @@ function getLoadingConfig(
   if (typeof loading === "object" && loading) {
     let delay = loading?.delay;
     delay = !Number.isNaN(delay) && typeof delay === "number" ? delay : 0;
-
+    // loading = { delay: number }
     return {
       loading: delay <= 0,
       delay,
     };
   }
-
+  // loading = false
   return {
     loading: !!loading,
     delay: 0,
@@ -94,7 +94,7 @@ const InternalButton: React.ForwardRefRenderFunction<
     danger,
     shape = "default",
     size: customSize,
-    styles,
+    styles, // { icon: React.CSSProperties }
     disabled: customDisabled,
     className,
     rootClassName,
@@ -103,7 +103,7 @@ const InternalButton: React.ForwardRefRenderFunction<
     ghost = false,
     block = false,
     htmlType = "button",
-    classNames: customClassNames,
+    classNames: customClassNames, // { icon: string }
     style: customStyle = {},
     ...rest
   } = props;
