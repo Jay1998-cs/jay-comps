@@ -56,7 +56,7 @@ const CSSVarRegister: React.FC<any> = (props) => {
    * (3)原组件样式缓存(cachePathKeys记录历史缓存标识)引用数量-1，若引用数为0，则删除对应style标签。
    */
   useEffect(() => {
-    console.log("\n####### tokenKey Effect ########## \n\n");
+    console.log("\n####### tokenKey Effect ######### \n\n");
 
     // 步骤(3) 注: tokenKey变动时才修改缓存数据; 需放在前两个步骤之前, 因为前面步骤操作cache影响判断
     if (tokenKey !== cachePathKeys[0]) {

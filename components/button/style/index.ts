@@ -1,44 +1,40 @@
 import genComponentStyleHook from "../../theme/util/genComponentStyleHook";
+import { TokenType } from "../../theme";
+import {
+  genTypeButtonStyle,
+  genGhostButtonStyle,
+  genDangerButtonStyle,
+  genDisabledButtonStyle,
+  genSizeButtonStyle,
+  genShapeButtonStyle,
+  genBlockButtonStyle,
+} from "./genStyleByToken";
+
+export type ButtonToken = Partial<
+  TokenType & {
+    componentCls: string;
+  }
+>;
 
 /**
  *
  * @param token 组件的样式配置对象
- * @returns 组件的CSS样式对象，key为选择器，value为若干条声明组成的对象
+ * @returns CSS样式对象数组，数组每一项相当于一个style对象，每一项会合并到一个style标签内
+ * @returns 形如 [ { .jay-btn:{border:'none', ...}, .jay-btn-hover:{...} } , {...} ]
  */
-function genButtonStyle(token: any) {
-  // {componentCls: '.jay-btn', colorPrimary: '#1677ff', borderRadius: 6, ... }
-  const { componentCls } = token;
+function styleFn(token: ButtonToken) {
+  const styleObjArray = [
+    genSizeButtonStyle(token),
+    genShapeButtonStyle(token),
+    genBlockButtonStyle(token),
+    genTypeButtonStyle(token),
+    genGhostButtonStyle(token),
+    genDangerButtonStyle(token),
+    genDisabledButtonStyle(token),
+  ];
+  console.log("\n\n ##########", styleObjArray, "\n\n");
 
-  // Button的CSS样式
-  return {
-    [`${componentCls}`]: {
-      border: token.border || "none",
-      background: token.colorPrimary || "#1677ff",
-      color: token.color || "#fff",
-      borderRadius: token.borderRadius || "6px",
-      padding: token.padding || "4px 16px",
-      cursor: "pointer",
-    },
-
-    [`${componentCls}:hover`]: {
-      opacity: "0.9",
-    },
-
-    [`${componentCls}:active`]: {
-      opacity: "1",
-    },
-  };
-}
-
-/**
- *
- * @param token 组件的样式配置对象
- * @returns CSS样式对象数组，每一个项表示一条CSS规则对象(key是选择器，value是声明)
- */
-function styleFn(token: any) {
-  // [ {.jay-btn: {border:'none', background:'#1677ff', color:'#fff', ...}} ]
-  // console.error([genButtonStyle(token)]);
-  return [genButtonStyle(token)];
+  return styleObjArray;
 }
 
 // genComponentStyleHook() return useStyle()

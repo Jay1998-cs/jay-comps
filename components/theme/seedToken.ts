@@ -26,7 +26,7 @@ export interface SeedToken extends PresetColorType {
   lineType: string;
 
   // border
-  // border: string;
+  border: string;
   borderRadius: number;
 
   // other

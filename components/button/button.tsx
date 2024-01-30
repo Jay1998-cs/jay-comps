@@ -117,7 +117,7 @@ const InternalButton: React.ForwardRefRenderFunction<
   const buttonRef = composeRef(ref, internalRef); // ref.current | internalRef.current
 
   const disabled = useContext(DisabledContext);
-  const mergedDisabled = disabled ?? customDisabled;
+  const mergedDisabled = disabled || customDisabled;
 
   const sizeClassNameMap = { large: "lg", small: "sm", middle: undefined };
   const sizeFullName = useSize((ctxSize) => customSize ?? ctxSize);
@@ -179,11 +179,12 @@ const InternalButton: React.ForwardRefRenderFunction<
       [`${prefixCls}-${type}`]: type,
       [`${prefixCls}-${sizeCls}`]: sizeCls,
       [`${prefixCls}-icon-only`]: !children && children !== 0 && !!iconType,
-      [`${prefixCls}-background-ghost`]: ghost && !isUnBorderedButtonType(type),
+      [`${prefixCls}-ghost`]: ghost && !isUnBorderedButtonType(type),
       [`${prefixCls}-loading`]: innerLoading,
       [`${prefixCls}-block`]: block,
       [`${prefixCls}-danger`]: !!danger,
       [`${prefixCls}-direction`]: direction === "rtl",
+      [`${prefixCls}-disabled`]: mergedDisabled,
     }
   );
 

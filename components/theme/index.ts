@@ -3,6 +3,7 @@ import { defaultConfig } from "./context";
 import CacheEntity from "./Cache";
 import { StyleProvider } from "./StyleContext";
 import StyleContext from "./StyleContext";
+import type { TokenType } from "./context";
 
 const ThemeModules = {
   defaultConfig,
@@ -17,3 +18,5 @@ const ThemeModules = {
 };
 
 export default ThemeModules;
+
+export type { TokenType };
