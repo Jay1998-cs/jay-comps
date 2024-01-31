@@ -12,7 +12,7 @@ export default function useTheme(
   parentTheme?: ThemeConfig
 ): ThemeConfig | undefined {
   // 获取组件、上层(默认)主题
-  const themeConfig = theme || {};
+  const componentThemeConfig = theme || {};
   const parentThemeConfig = parentTheme || defaultConfig;
 
   // return React.useMemo<ThemeConfig | undefined>(() => {
@@ -23,11 +23,13 @@ export default function useTheme(
 
   // 组件设置主题，合并主题，且最近(组件主题)优先
   return {
+    // 合并属性，就近优先(componentThemeConfig在后)
     ...parentThemeConfig,
-    ...themeConfig,
+    ...componentThemeConfig,
+    // 合并样式配置对象
     token: {
       ...parentThemeConfig.token,
-      ...themeConfig.token,
+      ...componentThemeConfig.token,
     },
   };
   // }, [themeConfig, parentThemeConfig]);

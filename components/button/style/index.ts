@@ -8,6 +8,8 @@ import {
   genSizeButtonStyle,
   genShapeButtonStyle,
   genBlockButtonStyle,
+  genIconOnlyButtonStyle,
+  genLodingButtonStyle,
 } from "./genStyleByToken";
 
 export type ButtonToken = Partial<
@@ -24,15 +26,16 @@ export type ButtonToken = Partial<
  */
 function styleFn(token: ButtonToken) {
   const styleObjArray = [
+    genTypeButtonStyle(token),
     genSizeButtonStyle(token),
     genShapeButtonStyle(token),
     genBlockButtonStyle(token),
-    genTypeButtonStyle(token),
     genGhostButtonStyle(token),
     genDangerButtonStyle(token),
     genDisabledButtonStyle(token),
+    genIconOnlyButtonStyle(token),
+    genLodingButtonStyle(token),
   ];
-  console.log("\n\n ##########", styleObjArray, "\n\n");
 
   return styleObjArray;
 }

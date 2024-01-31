@@ -38,35 +38,36 @@ const ProdviderChildren: React.FC<ProdiverChildrenProps> = (props) => {
     [parentContext, prefixCls]
   );
 
-  // 获取主题对象，包含token属性，即样式配置对象
+  // 获取主题对象theme，包含token属性
   const mergedTheme = useTheme(theme, parentContext.theme);
 
-  // 提取主题配置
+  // 提取、缓存主题配置
   const memoTheme = React.useMemo(() => {
     const { token, ...rest } = mergedTheme || {};
     return {
       token: {
+        // 合并默认token与自定义主题token
         ...defaultSeedToken,
-        ...token,
+        ...token, // 注: 自定义优先, 故位置在后
       },
       ...rest,
     };
   }, [mergedTheme]);
 
-  // 合并组件配置和父级配置到config对象
+  // 合并组件配置和父级配置到config对象(重点为theme属性)
+  const config = { ...parentContext };
   const baseConfig = {
     getPrefixCls,
     theme: mergedTheme,
     direction,
   };
-  const config = { ...parentContext };
   Object.keys(baseConfig).forEach((key: keyof typeof baseConfig) => {
     if (baseConfig[key] !== undefined) {
       (config as any)[key] = baseConfig[key];
     }
   });
 
-  // 通过ConfigProvider插入主题样式
+  // DesignTokenContext.Provider封装children, 传递theme使后代能获取到token(如useToken)
   let childNode = children;
   if (theme) {
     childNode = (
@@ -76,13 +77,13 @@ const ProdviderChildren: React.FC<ProdiverChildrenProps> = (props) => {
     );
   }
 
-  // 返回ConfigProvider容器组件
+  // 返回ConfigProvider容器组件(ConfigContext.Provider包裹使后代能使用context即调用useContext)
   return (
     <ConfigContext.Provider value={config}>{childNode}</ConfigContext.Provider>
   );
 };
 
-// 组件样式生效容器 Consumer
+// 组件样式生效容器, props包含自定义主题对象theme, 而theme中含样式配置对象token
 const ConfigProvider: React.FC<ConfigProviderProps> = (props) => {
   return (
     <ConfigConsumer>

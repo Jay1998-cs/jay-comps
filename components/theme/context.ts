@@ -1,20 +1,14 @@
 import React from "react";
 import { SeedToken } from "./seedToken";
 
-type TokenAdditionType = {
-  padding: string;
-  color: string;
-};
-
-// ### 待改，直接使用 SeedToken
-export type TokenType = Partial<SeedToken & TokenAdditionType>;
+export type TokenType = Partial<SeedToken>;
 
 // SeedToken 默认样式配置对象
 export const defaultSeedToken: TokenType = {
   colorPrimary: "rgba(20,120,255)",
-  colorBgBase: "rgba(255,255,255)",
-  colorInfo: "rgba(0,0,0)",
-  border: "1px solid rgba(0,0,0)",
+  colorBgContainer: "rgba(255,255,255)",
+  color: "rgba(0,0,0)",
+  border: "1px solid rgba(0,0,0,0.5)",
   borderRadius: 6,
   padding: "4px 16px",
 };

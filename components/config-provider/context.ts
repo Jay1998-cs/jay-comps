@@ -19,7 +19,7 @@ export interface Theme {
 
 // 主题配置
 export interface ThemeConfig {
-  token?: Partial<SeedToken>; //【关键属性：组件的样式配置对象】
+  token?: Partial<SeedToken>; //【组件的样式配置对象】
   hashed?: boolean;
   inherit?: boolean;
   cssVar?: { prefix?: string; key?: string } | boolean;
@@ -53,7 +53,7 @@ export interface ConfigConsumerProps {
   rootPrefixCls?: string;
   iconPrefixCls: string;
   getPrefixCls: (suffixCls?: string, customizePrefixCls?: string) => string;
-  theme?: ThemeConfig;
+  theme?: ThemeConfig; //【定制主题】
   direction?: DirectionType;
   button?: ButtonConfig;
 }

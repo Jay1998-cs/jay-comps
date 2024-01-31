@@ -14,7 +14,7 @@ export function injectHashSelector(key: string, cssSelectorCls: string) {
   const hashClassName = `.${cssSelectorCls}`;
   const selector = `:where(${hashClassName})`;
 
-  return `${key}${selector}`;
+  return `${selector}${key}`;
 }
 
 // 解析、返回CSS样式字符串

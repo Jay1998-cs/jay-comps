@@ -61,7 +61,7 @@ const CSSVarRegister: React.FC<any> = (props) => {
     // 步骤(3) 注: tokenKey变动时才修改缓存数据; 需放在前两个步骤之前, 因为前面步骤操作cache影响判断
     if (tokenKey !== cachePathKeys[0]) {
       cache.update(cachePathKeys, (origin = null) => {
-        console.error("origin: ", origin);
+        // console.error("origin: ", origin);
         if (origin) {
           origin[0] -= 1;
           console.error("**【原先缓】存引用数-1: ", origin);

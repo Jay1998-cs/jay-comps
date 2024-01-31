@@ -66,13 +66,13 @@ function getLoadingConfig(
   if (typeof loading === "object" && loading) {
     let delay = loading?.delay;
     delay = !Number.isNaN(delay) && typeof delay === "number" ? delay : 0;
-    // loading = { delay: number }
+    // { loading: false, delay: <= 0 } | { loading: true, delay: > 0 }
     return {
-      loading: delay <= 0,
+      loading: delay > 0,
       delay,
     };
   }
-  // loading = false
+  // { loading: false, delay: 0 }
   return {
     loading: !!loading,
     delay: 0,
@@ -128,22 +128,22 @@ const InternalButton: React.ForwardRefRenderFunction<
     [loading]
   );
   const [innerLoading, setLoading] = useState<boolean>(loadingOrDelay.loading);
-
   const iconType = innerLoading ? "loading" : icon;
 
   const linkButtonRestProps = omit(rest as ButtonProps & { navigate: any }, [
     "navigate",
   ]);
 
+  // 设置icon的loading动画持续时间
   useEffect(() => {
     let delayTimer: ReturnType<typeof setTimeout> | null = null;
     if (loadingOrDelay.delay > 0) {
       delayTimer = setTimeout(() => {
         delayTimer = null;
-        setLoading(true);
+        setLoading(false); // 加载延迟delay(ms)后关闭loading动画
       }, loadingOrDelay.delay);
     } else {
-      setLoading(loadingOrDelay.loading);
+      setLoading(loadingOrDelay.loading); // 若设置了loading属性则为true
     }
 
     return () => {
@@ -239,7 +239,7 @@ const InternalButton: React.ForwardRefRenderFunction<
     );
   }
 
-  // 基础Button节点
+  // 基础Button节点, 注意, 第一个子节点是iconNode, 用于封装icon(如loading动画)
   let buttonNode = (
     <button
       {...rest}

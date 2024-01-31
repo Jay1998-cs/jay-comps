@@ -4,27 +4,37 @@ import type { ButtonToken } from "./";
 const genDefaultButtonStyle = (token: ButtonToken) => {
   const { componentCls } = token;
 
+  const defaultStyle: any = {};
+  if (token.colorBorder !== undefined) {
+    defaultStyle["borderColor"] = token.colorBorder as string;
+  }
+
   return {
+    // all
     [`${componentCls}`]: {
       border: token.border || "none",
-      background: token.colorBgBase || "#fff",
-      color: token.color || token.colorInfo || "#000",
+      background: token.colorBgContainer || "#fff",
+      color: token.color || "#000",
       borderRadius: token.borderRadius || "6px",
       padding: token.padding || "4px 16px",
       display: "inline-block",
       fontSize: "14px",
       cursor: "pointer",
+      minHeight: "32px",
     },
 
     [`${componentCls}:hover`]: {
       color: token.colorPrimary,
       borderColor: token.colorPrimary,
-      opacity: "0.7",
+      opacity: "0.8",
     },
 
     [`${componentCls}:active`]: {
       opacity: "1",
     },
+
+    // default
+    [`${componentCls}${componentCls}-default`]: defaultStyle,
   };
 };
 
@@ -34,12 +44,12 @@ const genPrimaryButtonStyle = (token: ButtonToken) => {
   return {
     [`${componentCls}-primary`]: {
       background: token.colorPrimary,
-      color: "#fff",
+      color: token.colorPrimaryText || "#fff",
       border: "none",
     },
 
     [`${componentCls}-primary:hover`]: {
-      color: "#fff",
+      color: token.colorPrimaryText || "#fff",
     },
   };
 };
@@ -47,9 +57,15 @@ const genPrimaryButtonStyle = (token: ButtonToken) => {
 const genDashedButtonStyle = (token: ButtonToken) => {
   const { componentCls } = token;
 
+  const styleObj: any = {};
+  if (token.colorBorder !== undefined) {
+    styleObj["borderColor"] = token.colorBorder as string;
+  }
+
   return {
     [`${componentCls}-dashed`]: {
       border: "1px dashed #000",
+      ...styleObj,
     },
   };
 };
@@ -58,10 +74,13 @@ const genTextButtonStyle = (token: ButtonToken) => {
   const { componentCls } = token;
 
   return {
-    [`${componentCls}-link`]: {
+    [`${componentCls}-text`]: {
+      color: token.colorText || "#000",
       border: "none",
-      color: token.colorPrimary,
       background: "transparent",
+    },
+    [`${componentCls}-text:hover`]: {
+      background: "rgba(0,0,0,0.06)",
     },
   };
 };
@@ -70,12 +89,13 @@ const genLinkButtonStyle = (token: ButtonToken) => {
   const { componentCls } = token;
 
   return {
-    [`${componentCls}-text`]: {
+    [`${componentCls}-link`]: {
       border: "none",
+      color: token.colorLink || token.colorPrimary || "#1677ff",
       background: "transparent",
     },
-    [`${componentCls}-text:hover`]: {
-      background: "rgba(0,0,0,0.06)",
+    [`${componentCls}-link:hover`]: {
+      color: token.colorLink || token.colorPrimary || "#1677ff",
     },
   };
 };
@@ -103,9 +123,9 @@ const genGhostButtonStyle = (token: ButtonToken) => {
   return {
     // default ghost
     [`${componentCls}-ghost`]: {
-      color: "#fff",
+      color: token.colorBgContainer || "#fff",
       background: "transparent ",
-      borderColor: "#fff",
+      borderColor: token.colorBgContainer || "#fff",
     },
     // primary ghost
     [`${componentCls}-ghost${componentCls}-primary`]: {
@@ -123,27 +143,27 @@ const genDangerButtonStyle = (token: ButtonToken) => {
 
   return {
     // default danger
-    [`${componentCls}-danger`]: {
+    [`${componentCls}${componentCls}-danger`]: {
       color: dangerColor,
       borderColor: dangerColor,
     },
-    [`${componentCls}-danger:hover`]: {
+    [`${componentCls}${componentCls}-danger:hover`]: {
       color: dangerColor,
       borderColor: dangerColor,
       opacity: "0.7",
     },
-    [`${componentCls}-danger:active`]: {
+    [`${componentCls}${componentCls}-danger:active`]: {
       color: dangerColor,
       borderColor: dangerColor,
       opacity: "1",
     },
     // primary danger
-    [`${componentCls}-danger${componentCls}-primary`]: {
+    [`${componentCls}${componentCls}-danger${componentCls}-primary`]: {
       color: "#fff",
       background: dangerColor,
     },
     // text danger
-    [`${componentCls}-danger${componentCls}-text:hover`]: {
+    [`${componentCls}${componentCls}-danger${componentCls}-text:hover`]: {
       background: "rgb(255,240,240)",
     },
   };
@@ -164,15 +184,18 @@ const genDisabledButtonStyle = (token: ButtonToken) => {
 
   return {
     // default disabled
-    [`${componentCls}-disabled`]: disabledStyle,
-    [`${componentCls}-disabled:hover, ${componentCls}-disabled:active`]:
+    [`${componentCls}${componentCls}-disabled`]: disabledStyle,
+    [`${componentCls}${componentCls}-disabled:hover, ${componentCls}${componentCls}-disabled:active`]:
       disabledStyle,
     // text disabled
-    [`${componentCls}-disabled${componentCls}-text`]: {
+    [`${componentCls}${componentCls}-disabled${componentCls}-text`]: {
+      background: "none",
+    },
+    [`${componentCls}${componentCls}-disabled${componentCls}-text:hover`]: {
       background: "none",
     },
     // link disabled
-    [`${componentCls}-disabled${componentCls}-link`]: {
+    [`${componentCls}${componentCls}-disabled${componentCls}-link`]: {
       background: "none",
     },
   };
@@ -198,10 +221,10 @@ const genSizeButtonStyle = (token: ButtonToken) => {
 
   return {
     // large size
-    [`${componentCls}-lg${componentCls}`]: lgStyle,
+    [`${componentCls}${componentCls}-lg`]: lgStyle,
 
     // small size
-    [`${componentCls}-sm${componentCls}`]: smStyle,
+    [`${componentCls}${componentCls}-sm`]: smStyle,
   };
 };
 
@@ -213,7 +236,9 @@ const genShapeButtonStyle = (token: ButtonToken) => {
     // circle shape
     [`${componentCls}-circle${componentCls}`]: {
       minWidth: "32px",
+      minHeight: "32px",
       borderRadius: "50%",
+      padding: "6px",
     },
     // round shape
     [`${componentCls}-round${componentCls}`]: {
@@ -234,6 +259,35 @@ const genBlockButtonStyle = (token: ButtonToken) => {
   };
 };
 
+/////////////////////////// icon //////////////////////////////////
+
+const genIconOnlyButtonStyle = (token: ButtonToken) => {
+  const { componentCls } = token;
+  return {
+    // icon only
+    [`${componentCls}-icon-only`]: {
+      width: "32px",
+      paddingInlineStart: "0",
+      paddingInlineEnd: "0",
+    },
+  };
+};
+
+/////////////////////////// loading //////////////////////////////////
+
+const genLodingButtonStyle = (token: ButtonToken) => {
+  const { componentCls } = token;
+
+  return {
+    // icon only
+    [`${componentCls}${componentCls}-loading`]: {
+      opacity: "0.7",
+      cursor: "default",
+      pointerEvents: "none",
+    },
+  };
+};
+
 export {
   genTypeButtonStyle,
   genGhostButtonStyle,
@@ -242,4 +296,6 @@ export {
   genSizeButtonStyle,
   genShapeButtonStyle,
   genBlockButtonStyle,
+  genIconOnlyButtonStyle,
+  genLodingButtonStyle,
 };
