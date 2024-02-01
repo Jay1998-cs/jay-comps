@@ -99,10 +99,10 @@ const CustomButtonPage = () => {
 
   return (
     <div className="custom-button-page">
-      <h1>Custom Button</h1>
+      <h2>Custom Button</h2>
 
-      <h2>1.内置(默认)按钮</h2>
-      <h3>五种类型按钮</h3>
+      <h3>1.内置(默认)按钮</h3>
+      <h4>五种类型按钮</h4>
       <FlexRow>
         <Button type="primary">Primary Button</Button>
         <Button>Default Button</Button>
@@ -111,7 +111,7 @@ const CustomButtonPage = () => {
         <Button type="link">Link Button</Button>
       </FlexRow>
 
-      <h2>2.客制按钮</h2>
+      <h3>2.客制按钮</h3>
       <FlexCol>
         <h3>自定义主题: ConfigProvier</h3>
         <div>主题色: 绿色</div>
@@ -172,8 +172,8 @@ const CustomButtonPage = () => {
         </FlexRow>
       </FlexCol>
 
-      <h2>3.应用|实践: 动态切换按钮主题色</h2>
-      <h3>日夜: 黑白主题</h3>
+      <h3>3.应用|实践: 动态切换按钮主题色</h3>
+      <h4>日夜: 黑白主题</h4>
       {DynamicDayNightBtns}
     </div>
   );

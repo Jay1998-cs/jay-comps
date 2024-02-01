@@ -56,7 +56,7 @@ const DefinedButtonPage = () => {
 
   return (
     <FlexCol id="dev-button-page">
-      <h1>Button</h1>
+      <h2>Defined Button</h2>
 
       <h3>五种按钮类型: type属性</h3>
       <FlexRow>
