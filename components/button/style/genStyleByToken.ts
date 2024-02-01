@@ -3,6 +3,7 @@ import type { ButtonToken } from "./";
 /////////////////////////// type //////////////////////////////////
 const genDefaultButtonStyle = (token: ButtonToken) => {
   const { componentCls } = token;
+  token.colorPrimary = token.colorPrimary ?? "#167ff";
 
   const defaultStyle: any = {};
   if (token.colorBorder !== undefined) {
@@ -19,6 +20,7 @@ const genDefaultButtonStyle = (token: ButtonToken) => {
       padding: token.padding || "4px 16px",
       display: "inline-block",
       fontSize: "14px",
+      fontWeight: token.fontWeight || "normal",
       cursor: "pointer",
       minHeight: "32px",
     },
@@ -26,7 +28,7 @@ const genDefaultButtonStyle = (token: ButtonToken) => {
     [`${componentCls}:hover`]: {
       color: token.colorPrimary,
       borderColor: token.colorPrimary,
-      opacity: "0.8",
+      opacity: "0.75",
     },
 
     [`${componentCls}:active`]: {
@@ -46,6 +48,7 @@ const genPrimaryButtonStyle = (token: ButtonToken) => {
       background: token.colorPrimary,
       color: token.colorPrimaryText || "#fff",
       border: "none",
+      fontWeight: token.fontPrimaryWeight || "normal",
     },
 
     [`${componentCls}-primary:hover`]: {
@@ -127,6 +130,9 @@ const genGhostButtonStyle = (token: ButtonToken) => {
       background: "transparent ",
       borderColor: token.colorBgContainer || "#fff",
     },
+    // [`${componentCls}-ghost:hover`]: {
+    //   color: token.colorBgContainer || "#fff",
+    // },
     // primary ghost
     [`${componentCls}-ghost${componentCls}-primary`]: {
       color: token.colorPrimary || token.color || "#1677ff",
