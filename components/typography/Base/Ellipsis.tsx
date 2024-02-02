@@ -219,6 +219,7 @@ const Ellipsis: React.FC<Ellipsisprops> = ({
               wordBreak: "keep-all",
               whiteSpace: "nowrap",
             })}
+
             {walkingState === PREPARE
               ? renderMeasure(
                   children(nodeList, false),
