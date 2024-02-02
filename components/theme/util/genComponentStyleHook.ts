@@ -4,6 +4,7 @@ import useStyleRegister from "./useStyleRegister";
 /**
  * @param component refer to component name like Button
  * @param styleFn function to generate style object
+ * @returns useStyle(prefixCls)
  */
 export default function genComponentStyleHook(
   component: string,
@@ -27,7 +28,9 @@ export default function genComponentStyleHook(
 
     const wrapCSSVar = useStyleRegister(info, genStyleObjFn);
 
+    let cssVarCls = ""; // ? 待完善[可能是由token铺平再生成的hash值]
+
     // 返回包裹node用于注入CSS的函数组件wrapCSSVar，以及node的样式类名cssSelectorCls
-    return [wrapCSSVar, cssSelectorCls];
+    return [wrapCSSVar, cssSelectorCls, cssVarCls];
   };
 }

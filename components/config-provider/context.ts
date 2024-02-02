@@ -55,7 +55,10 @@ export interface ConfigConsumerProps {
   getPrefixCls: (suffixCls?: string, customizePrefixCls?: string) => string;
   theme?: ThemeConfig; //【定制主题】
   direction?: DirectionType;
+
+  // component config
   button?: ButtonConfig;
+  typography?: ComponentStyleConfig;
 }
 
 // 全局上下文对象 ConfigContext

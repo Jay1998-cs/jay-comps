@@ -1,9 +1,9 @@
-import useToken from "./useToken";
 import { defaultConfig } from "./context";
 import CacheEntity from "./Cache";
 import { StyleProvider } from "./StyleContext";
 import StyleContext from "./StyleContext";
 import type { TokenType } from "./context";
+import { SeedToken } from "./seedToken";
 
 const ThemeModules = {
   defaultConfig,
@@ -13,10 +13,10 @@ const ThemeModules = {
 
   StyleContext,
   StyleProvider,
-
-  useToken,
 };
-
 export default ThemeModules;
 
-export type { TokenType };
+export type { TokenType, SeedToken };
+
+export { default as genComponentStyleHook } from "./util/genComponentStyleHook";
+export { default as useToken } from "./useToken";

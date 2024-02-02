@@ -124,7 +124,7 @@ const CSSVarRegister: React.FC<any> = (props) => {
  * @description inject CSS to a component
  * @param info object: { token, path, hashId}
  * @param styleFn function to generate style object
- * @returns a wrapper function named WrapCSSVar, useage: WrapCSSVar(node)
+ * @returns a wrapper function named WrapCSSVar(), useage: WrapCSSVar(node)
  */
 export default function useStyleRegister(
   info: {

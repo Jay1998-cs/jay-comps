@@ -114,7 +114,15 @@ const Ellipsis: React.FC<Ellipsisprops> = ({
     }
 
     return children(sliceNodes(nodeList, midLen), midLen < totalLen);
-  }, [children, enabledMeasure, nodeList, midLen, totalLen, walkingState]);
+  }, [
+    children,
+    enabledMeasure,
+    nodeList,
+    midLen,
+    totalLen,
+    walkingState,
+    lastLen,
+  ]);
 
   // ======================== Walk ========================
   useIsomorphicLayoutEffect(() => {

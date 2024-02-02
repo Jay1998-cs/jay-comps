@@ -32,8 +32,9 @@ type TokenInfoType = [theme: any, cssSelectorCls: string, tokenKey: string];
 
 /**
  *
+ * @description 返回组件的样式配置对象token，它合并了默认和上层(最近祖先)的token
  * @param component 组件名(string), 如'Button'
- * @returns 返回组件的样式配置对象token，它合并了默认和上层(最近祖先)的token
+ * @returns [mergedToken, cssSelectorCls ? cssSelectorCls : "", tokenKey]
  */
 export default function useToken(component: string): TokenInfoType {
   // 获取上层token
@@ -45,7 +46,7 @@ export default function useToken(component: string): TokenInfoType {
   );
   // 生成tokenKey，用于标识组件的CSS选择器和生成style标签的id
   const tokenKey = token2key(mergedToken, component);
-  // 组件对应style标签的选择器名称
+  // 组件对应style标签中的选择器名称, 如 :where(cssSelectorCls)
   const cssSelectorCls = `css-dev-only-do-not-override-${tokenKey}`;
 
   return [mergedToken, cssSelectorCls ? cssSelectorCls : "", tokenKey];
