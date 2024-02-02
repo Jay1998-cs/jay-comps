@@ -69,6 +69,24 @@ export interface BlockProps<
   italic?: boolean;
 }
 
+function getNode(
+  dom: React.ReactNode,
+  defaultNode: React.ReactNode,
+  needDom?: boolean
+) {
+  if (dom === true || dom === undefined) {
+    return defaultNode;
+  }
+  return dom || (needDom && defaultNode);
+}
+
+function toList<T extends any>(val: T | T[]): T[] {
+  if (val === false) {
+    return [false, false] as T[];
+  }
+  return Array.isArray(val) ? val : [val];
+}
+
 ////////////////////////// Base //////////////////////////
 const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
   const {
@@ -266,7 +284,41 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
   // =========================== Render ===========================
   // >>>>>>>>>>> Typography
   // Expand
-  const renderExpand = () => {};
+  const renderExpand = () => {
+    const { expandable, symbol } = ellipsisConfig;
+
+    if (!expandable) return null;
+
+    let expandContent: React.ReactNode = "";
+    if (symbol) {
+      expandContent = symbol;
+    }
+
+    return (
+      // eslint-disable-next-line jsx-a11y/anchor-is-valid
+      <a
+        key="expand"
+        className={`${prefixCls}-expand`}
+        onClick={onExpandClick}
+        aria-label=""
+      >
+        {expandContent}
+      </a>
+    );
+  };
+
+  // Copy
+  const renderCopy = () => {
+    if (!enableCopy) {
+      return null;
+    }
+
+    const { icon, tooltips = "" } = copyConfig;
+
+    const iconNodes = toList(icon);
+    const tooltipNodes = toList(tooltips);
+  };
+
   return null;
 });
 
