@@ -5,8 +5,8 @@ import useIsomorphicLayoutEffect from "rc-util/lib/hooks/useLayoutEffect";
 import { isStyleSupport } from "rc-util/lib/Dom/styleChecker";
 import TransButton from "../../_util/transButton";
 import classNames from "classnames";
-import { CheckOutlined, CopyOutlined } from "@ant-design/icons";
-import ResizeObserver from "rc-resize-observer"; // 监听尺寸改动的组件
+import { CopyOutlined, CheckOutlined } from "@ant-design/icons";
+import ResizeObserver from "rc-resize-observer";
 
 import Typography, { TypographyProps } from "../Typography";
 import type { TooltipProps } from "../../tooltip";
