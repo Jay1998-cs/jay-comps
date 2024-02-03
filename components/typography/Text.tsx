@@ -25,12 +25,7 @@ const Text: React.ForwardRefRenderFunction<HTMLSpanElement, TextProps> = (
   }, [ellipsis]);
 
   return (
-    <Base
-      ref={ref}
-      {...restProps}
-      ellipsis={mergedEllipsis}
-      component="span"
-    ></Base>
+    <Base component="span" ref={ref} {...restProps} ellipsis={mergedEllipsis} />
   );
 };
 

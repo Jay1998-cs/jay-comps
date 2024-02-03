@@ -10,7 +10,7 @@ import ResizeObserver from "rc-resize-observer";
 
 import Typography, { TypographyProps } from "../Typography";
 import type { TooltipProps } from "../../tooltip";
-import { ConfigContext } from "jay-comps/es/config-provider";
+import { ConfigContext } from "../../config-provider";
 import useMergedConfig from "../hooks/useMergedConfig";
 import { composeRef } from "rc-util/lib/ref";
 import Ellipsis from "./Ellipsis";
@@ -409,6 +409,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
     WebkitLineClamp: cssLineClamp ? rows : undefined,
   };
 
+  // 回调函数,
   const ellipsisChildren = (node: React.ReactNode, needEllipsis: boolean) => {
     let renderNode: React.ReactNode = node;
     const noLengthAttr =
@@ -418,9 +419,10 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
       typeof node === "symbol";
 
     if (!noLengthAttr && needEllipsis) {
-      renderNode = <span key="show-content">{renderNode}</span>;
+      renderNode = <span key="show-content">{renderNode}</span>; // 文本节点
     }
 
+    // 装饰node(如封装strong、italic等装饰标签)
     const wrappedContext = wrapperDecorations(
       props,
       <>
@@ -443,7 +445,6 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
           direction={direction}
           title={title}
           style={typographyStyle}
-          aria-label="typography"
           {...textProps}
         >
           <Ellipsis

@@ -82,7 +82,7 @@ const Typography = React.forwardRef<HTMLElement, InternalTypographyProps<any>>(
     );
 
     if (typeof wrapCSSVar === "function") {
-      return wrapCSSVar(typographyNode);
+      return wrapCSSVar(typographyNode); // 注入CSS样式
     }
 
     return typographyNode;

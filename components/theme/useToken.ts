@@ -2,7 +2,8 @@ import React from "react";
 import emotionHash from "@emotion/hash";
 
 // import { SeedToken } from "./seedToken";
-import { DesignTokenContext, defaultSeedToken } from "./context";
+import { DesignTokenContext } from "./context";
+import defaultSeedToken from "./seedToken";
 
 // 将token的所有值拼接为一个字符串返回，用于生成hashId
 function flattenTokenToStr(token: any): string {

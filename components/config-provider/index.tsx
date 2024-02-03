@@ -6,7 +6,8 @@ import type {
   defaultIconPrefixCls,
 } from "./context";
 import useTheme from "./hooks/useTheme";
-import { DesignTokenContext, defaultSeedToken } from "../theme/context";
+import { DesignTokenContext } from "../theme/context";
+import defaultSeedToken from "../theme/seedToken";
 import { ConfigConsumerProps, ConfigConsumer, ConfigContext } from "./context";
 
 // context的基础属性

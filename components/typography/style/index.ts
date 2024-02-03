@@ -1,10 +1,14 @@
-import { genComponentStyleHook } from "jay-comps/es/theme";
+import { genComponentStyleHook } from "../../theme";
 import { SeedToken } from "../../theme";
+import { genDefaultTypographyStyle, genTextStyle } from "./genStyleByToken";
 
-type TypographyToken = Partial<SeedToken>;
+export type TypographyToken = Partial<SeedToken> & {
+  componentCls: string;
+  colorTextDescription?: string;
+};
 
 function styleFn(token: TypographyToken) {
-  const styleObjArray = [{}];
+  const styleObjArray = [genDefaultTypographyStyle(token), genTextStyle(token)];
 
   return styleObjArray;
 }
