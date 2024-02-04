@@ -26,10 +26,16 @@ export interface SeedToken extends PresetColorType {
   colorBgContainer: string;
   // colorHover: string; // 所有按钮悬浮时的颜色
 
+  colorPrimaryText: string; // primary button
+
+  colorText: string;
+  colorLink: string;
+
   // font
   color: string;
   fontSize: number;
   fontWeight: string;
+  fontPrimaryWeight: number; // primary button
 
   // line
   lineWidth: number;
@@ -48,12 +54,6 @@ export interface SeedToken extends PresetColorType {
   zIndexBase: number;
   opacityImage: number;
   zIndexPopupBase: number;
-
-  // button
-  fontPrimaryWeight: number;
-  colorPrimaryText: string; // primary button
-  colorText: string; // text button
-  colorLink: string; // link button
 }
 
 const defaultSeedToken: Partial<SeedToken> = {
@@ -62,6 +62,7 @@ const defaultSeedToken: Partial<SeedToken> = {
 
   // Color
   color: "#000",
+  colorText: "#000",
   colorPrimary: "#1677ff",
   colorSuccess: "#52c41a",
   colorWarning: "#faad14",

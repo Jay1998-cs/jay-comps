@@ -217,13 +217,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
       ellipsisConfig.onEllipsis ||
       ellipsisConfig.expandable ||
       enableCopy,
-    [
-      mergedEnableEllipsis,
-      ellipsisConfig.suffix,
-      ellipsisConfig.onEllipsis,
-      ellipsisConfig.expandable,
-      enableCopy,
-    ]
+    [mergedEnableEllipsis, ellipsisConfig, enableCopy]
   );
 
   useIsomorphicLayoutEffect(() => {
@@ -329,7 +323,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
 
     if (!expandable) return null;
 
-    let expandContent: React.ReactNode = "";
+    let expandContent: React.ReactNode = " Expand";
     if (symbol) {
       expandContent = symbol;
     }
@@ -340,7 +334,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
         key="expand"
         className={`${prefixCls}-expand`}
         onClick={onExpandClick}
-        aria-label=""
+        aria-label="Expand"
       >
         {expandContent}
       </a>
@@ -368,6 +362,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
 
     return (
       <TransButton
+        key={String(Math.random()).slice(-8)}
         className={classes}
         onClick={onCopyClick}
         aria-label={ariaLabel}
@@ -419,7 +414,11 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
       typeof node === "symbol";
 
     if (!noLengthAttr && needEllipsis) {
-      renderNode = <span key="show-content">{renderNode}</span>; // 文本节点
+      renderNode = (
+        <span key="show-content" aria-hidden>
+          {renderNode}
+        </span>
+      ); // 文本节点
     }
 
     // 装饰node(如封装strong、italic等装饰标签)

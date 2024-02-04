@@ -56,7 +56,7 @@ const CSSVarRegister: React.FC<any> = (props) => {
    * (3)原组件样式缓存(cachePathKeys记录历史缓存标识)引用数量-1，若引用数为0，则删除对应style标签。
    */
   useEffect(() => {
-    console.log("\n####### tokenKey Effect ######### \n\n");
+    // console.log("\n####### tokenKey Effect ######### \n\n");
 
     // 步骤(3) 注: tokenKey变动时才修改缓存数据; 需放在前两个步骤之前, 因为前面步骤操作cache影响判断
     if (tokenKey !== cachePathKeys[0]) {
@@ -64,11 +64,11 @@ const CSSVarRegister: React.FC<any> = (props) => {
         // console.error("origin: ", origin);
         if (origin) {
           origin[0] -= 1;
-          console.error("**【原先缓】存引用数-1: ", origin);
+          // console.error("**【原先缓】存引用数-1: ", origin);
           if (origin[0] <= 0) {
             const styleId: string = origin[1]?.styleId || "";
-            removeStyleNode(styleId, "更新缓存阶段");
-            console.warn("**【原缓存】引用数为0, 删除原缓存及移除style标签");
+            removeStyleNode(styleId);
+            // console.warn("**【原缓存】引用数为0, 删除原缓存及移除style标签");
             return null;
           }
         }
@@ -80,12 +80,12 @@ const CSSVarRegister: React.FC<any> = (props) => {
     cache.update(pathKeys, (origin) => {
       if (!origin) {
         const styleId = genStyle(pathKeys, cssSelectorCls, styleFn); // 新建样式标签
-        console.warn("==> tokenKey【新建】style标签和初始化缓存:\n ", cache);
+        // console.warn("==> tokenKey【新建】style标签和初始化缓存:\n ", cache);
         setCachePathKeys(pathKeys); // 记录缓存路径
         return [1, { styleId, pathKeys }]; // 引用数为1，当前组件使用该样式
       } else {
         origin[0] += 1; // 样式已存在，引用它的组件数量加1
-        console.warn("==> tokenKey新增【引用】组件\n ", cache);
+        // console.warn("==> tokenKey新增【引用】组件\n ", cache);
         setCachePathKeys(pathKeys);
         return origin;
       }
@@ -98,18 +98,18 @@ const CSSVarRegister: React.FC<any> = (props) => {
     return () => {
       cache.update(pathKeys, (origin) => {
         if (!origin) {
-          console.warn("##【组件卸载】无缓存, 返回null", pathKeys);
+          // console.warn("##【组件卸载】无缓存, 返回null", pathKeys);
           return null;
         } else {
-          console.error("【组件卸载】引用减少前", origin);
+          // console.error("【组件卸载】引用减少前", origin);
           origin[0] -= 1;
           if (origin[0] <= 0) {
             const styleId: string = origin[1]?.styleId || "";
-            console.warn("##【组件卸载】引用数减为0, 删除缓存及移除style标签");
-            removeStyleNode(styleId, "卸载阶段");
+            // console.warn("##【组件卸载】引用数减为0, 删除缓存及移除style标签");
+            removeStyleNode(styleId);
             return null;
           }
-          console.warn("##【组件卸载】缓存引用数-1", cache);
+          // console.warn("##【组件卸载】缓存引用数-1", cache);
           return origin;
         }
       });

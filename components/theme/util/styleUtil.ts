@@ -77,11 +77,11 @@ export function findStyleNode(key: string) {
 }
 
 // 移除key对应的style节点
-export function removeStyleNode(key: string, data: any) {
+export function removeStyleNode(key: string) {
   const container = getContainer();
   findStyles(container).forEach((styleNode) => {
     if (styleNode.getAttribute(attributeName) === key) {
-      console.error("**移除style标签:", styleNode, data ?? data);
+      // console.error("**移除style标签:", styleNode, data ?? data);
       container.removeChild(styleNode);
     }
   });
@@ -104,9 +104,9 @@ export function updateCSS(css: string, key: string) {
   if (existStyleNode) {
     if (existStyleNode.innerHTML !== css) {
       existStyleNode.innerHTML = css;
-      console.error("==> 已存在该style标签,但CSS不同、已更新CSS");
+      // console.error("==> 已存在该style标签,但CSS不同、已更新CSS");
     }
-    console.error("==> 已存在该style标签且CSS相同");
+    // console.error("==> 已存在该style标签且CSS相同");
     return;
   }
   // 样式节点不存在，创建样式节点并注入CSS样式字符串

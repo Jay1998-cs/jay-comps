@@ -8,7 +8,7 @@ export type TypographyProps = typeof InnerTypography & {
   Text: typeof Text;
   Link: typeof Link;
   Title: typeof Title;
-  Paragraphy: typeof Paragraph;
+  Paragraph: typeof Paragraph;
 };
 
 const Typography = InnerTypography as TypographyProps;
@@ -16,6 +16,6 @@ const Typography = InnerTypography as TypographyProps;
 Typography.Text = Text;
 Typography.Link = Link;
 Typography.Title = Title;
-Typography.Paragraphy = Paragraph;
+Typography.Paragraph = Paragraph;
 
 export default Typography;
