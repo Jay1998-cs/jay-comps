@@ -33,6 +33,34 @@ const genDefaultTypographyStyle = (token: TypographyToken) => {
   };
 };
 
+const genTitleStyle = (token: TypographyToken) => {
+  const { componentCls } = token;
+
+  return {
+    [`${componentCls}:where(h1,h2,h3,h4,h5)`]: {
+      color: token.colorTextHeading || "#000",
+      fontWeight: 600,
+      fontSize: "32px",
+      marginBottom: token.titleMarginBottom || "0.5em",
+    },
+    [`${componentCls}:where(h2,h3,h4,h5)`]: {
+      marginTop: token.titleMarginTop || "1em",
+    },
+    [`${componentCls}:where(h2)`]: {
+      fontSize: "28px",
+    },
+    [`${componentCls}:where(h3)`]: {
+      fontSize: "24px",
+    },
+    [`${componentCls}:where(h4)`]: {
+      fontSize: "20px",
+    },
+    [`${componentCls}:where(h5)`]: {
+      fontSize: "16px",
+    },
+  };
+};
+
 const genTextStyle = (token: TypographyToken) => {
   const { componentCls } = token;
 
@@ -134,6 +162,7 @@ const genEllipsisStyle = (token: TypographyToken) => {
 
 export {
   genDefaultTypographyStyle,
+  genTitleStyle,
   genTextStyle,
   genLinkStyle,
   genIconStyle,

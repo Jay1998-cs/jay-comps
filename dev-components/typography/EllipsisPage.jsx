@@ -1,26 +1,63 @@
 import React, { useState } from "react";
+
 import { Typography } from "../../components";
+const { Paragraph } = Typography;
+
+const textData = `
+        In the process of internal desktop applications development, many
+        different design specs and implementations would be involved, which
+        might cause designers and developers difficulties and duplication and
+        reduce the efficiency of development.
+`;
 
 const H3 = ({ children }) => <h3 style={{ color: "darkBlue" }}>{children}</h3>;
 
-const { Text, Paragraph } = Typography;
+// 1.省略末尾
+const EllipsisTail = ({ children }) => {
+  const [ellipsis, setEllipsis] = useState(true);
 
-// 省略中间
+  return (
+    <div>
+      <button
+        onClick={() => {
+          setEllipsis((pre) => !pre);
+        }}
+      >
+        Expand or Ellipsis
+      </button>
+      <Paragraph ellipsis={ellipsis}>{children}</Paragraph>
+    </div>
+  );
+};
+
+// 2.省略中间,后缀显示部分文字 ellipsis: { suffix: "suffixText"}
 const EllipsisMiddle = (props) => {
   const { suffixCount, children, ...rest } = props;
 
   const start = children.slice(0, children.length - suffixCount).trim();
-  const suffix = children.slice(-suffixCount).trim();
+  const suffix = children.slice(-suffixCount).trim(); // suffix text
+
+  // 【注意】传给ellipsis的是一个对象: { suffix: "...suffix text"}
+  const [suffixConfig, setSuffixConfig] = useState({ suffix });
 
   return (
-    <Text style={{ maxWidth: "100%" }} ellipsis={{ suffix }} {...rest}>
-      {start}
-    </Text>
+    <div>
+      <button
+        onClick={() => {
+          setSuffixConfig((pre) => (pre ? false : { suffix }));
+        }}
+      >
+        Expand or Ellipsis
+      </button>
+      <Paragraph style={{ maxWidth: "100%" }} ellipsis={suffixConfig} {...rest}>
+        {start}
+      </Paragraph>
+    </div>
   );
 };
 
-// 后缀
-const Suffix = () => {
+// 3.显示n行&后缀&展开 ellipsis:{ rows:n, expandable:true, suffix: "--William Shakespeare" }
+const EllipsisSuffix = () => {
   const [rows, setRows] = useState(3);
 
   const article =
@@ -28,6 +65,23 @@ const Suffix = () => {
 
   return (
     <>
+      <div>
+        <button
+          onClick={() => {
+            setRows((pre) => (pre + 1) % 10);
+          }}
+        >
+          显示行数+1
+        </button>
+        <span> </span>
+        <button
+          onClick={() => {
+            setRows((pre) => (pre - 1 >= 0 ? pre - 1 : 0));
+          }}
+        >
+          显示行数-1
+        </button>
+      </div>
       <Paragraph
         ellipsis={{
           rows,
@@ -45,29 +99,18 @@ const Suffix = () => {
   );
 };
 
-// 页面
-const EllipsisPage = () => {
+// 4.默认展开文字是Expand, 可改为ellipsis:{ rows: 3, expandable: true, symbol: "more" }
+const EllipsisSymbol = () => {
   const [ellipsis, setEllipsis] = useState(true);
+
   return (
-    <div className="dev-ellipsis-page" style={{ width: "50%" }}>
-      <H3>省略中间</H3>
-      <EllipsisMiddle suffixCount={18}>
-        In the process of internal desktop applications development, many
-        different design specs and implementations would be involved, which
-        might cause designers and developers difficulties and duplication and
-        reduce the efficiency of development.
-      </EllipsisMiddle>
-
-      <H3>后缀</H3>
-      <Suffix />
-
-      <H3>省略号</H3>
+    <div>
       <button
         onClick={() => {
           setEllipsis(!ellipsis);
         }}
       >
-        Expand
+        Expand or Ellipsis
       </button>
       <Paragraph ellipsis={ellipsis}>
         Ant Design, a design language for background applications, is refined by
@@ -95,6 +138,29 @@ const EllipsisPage = () => {
         Ant Design, a design language for background applications, is refined by
         Ant UED Team.
       </Paragraph>
+    </div>
+  );
+};
+
+//////////////////////////////////////////////////////////////////
+// 页面
+const EllipsisPage = () => {
+  return (
+    <div className="dev-ellipsis-page" style={{ width: "50%" }}>
+      <H3>6.1 省略末尾 ellipsis: boolean</H3>
+      <EllipsisTail>{textData}</EllipsisTail>
+
+      <H3>6.2 省略中间: {`ellipsis:{ suffix:{suffixText} }`} </H3>
+      <EllipsisMiddle suffixCount={25}>{textData}</EllipsisMiddle>
+
+      <H3>
+        6.3 显示n行&后缀&展开:
+        {` ellipsis:{ rows:n, expandable:true, suffix: "--William Shakespeare" }`}
+      </H3>
+      <EllipsisSuffix />
+
+      <H3>6.4 ellipsis 综合示例</H3>
+      <EllipsisSymbol />
     </div>
   );
 };
