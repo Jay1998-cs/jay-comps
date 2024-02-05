@@ -1,6 +1,7 @@
 import React from "react";
 import { ButtonProps } from "../button/button";
 import { SeedToken } from "../theme/seedToken";
+import { FlexProps } from "../flex";
 
 export type DirectionType = "ltr" | "rtl" | undefined;
 
@@ -32,10 +33,15 @@ export interface ComponentStyleConfig {
   style?: React.CSSProperties;
 }
 
-// Button样式配置
+// Button
 export interface ButtonConfig extends ComponentStyleConfig {
   classNames?: ButtonProps["classNames"];
   styles?: ButtonProps["styles"];
+}
+
+// Flex
+export interface FlexConfig extends ComponentStyleConfig {
+  vertical?: FlexProps["vertical"];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -59,6 +65,7 @@ export interface ConfigConsumerProps {
   // component config
   button?: ButtonConfig;
   typography?: ComponentStyleConfig;
+  flex?: FlexConfig;
 }
 
 // 全局上下文对象 ConfigContext
