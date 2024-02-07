@@ -15,7 +15,7 @@ import RowContext, { RowContextState } from "./RowContext";
 import useResponsiveObserver, {
   responsiveArray,
 } from "../_util/responsiveObserver";
-// import { useRowStyle } from "./style";
+import { useRowStyle } from "./style";
 
 const RowAligns = ["top", "middle", "bottom", "stretch"] as const;
 const RowJustify = [
@@ -94,6 +94,7 @@ const Row = forwardRef<HTMLDivElement, RowProps>((props, ref) => {
 
   // >>>>> side effect
   useEffect(() => {
+    console.warn("obs: side effect");
     const uid = responseiveObserver.subscribe((screen) => {
       setCurScreens(screen);
       const currentGutter = gutterRef.current || 0;
@@ -108,7 +109,7 @@ const Row = forwardRef<HTMLDivElement, RowProps>((props, ref) => {
     });
 
     return () => responseiveObserver.unsubscribe(uid);
-  }, []);
+  }, [responseiveObserver]);
 
   // >>>>>> calc gutter
   const getGutter = (): [Gap, Gap] => {
@@ -185,3 +186,5 @@ const Row = forwardRef<HTMLDivElement, RowProps>((props, ref) => {
 
   return rowNode;
 });
+
+export default Row;

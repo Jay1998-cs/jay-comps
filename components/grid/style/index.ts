@@ -1,4 +1,5 @@
-import { SeedToken } from "../../theme";
+import { SeedToken, genComponentStyleHook } from "../../theme";
+import { genGridRowStyle } from "./genStyleByToken";
 
 export type GridToken = Partial<SeedToken> & {
   componentCls: string;
@@ -27,3 +28,13 @@ export type GridToken = Partial<SeedToken> & {
   screenXXL?: number;
   screenXXLMin?: number;
 };
+
+// >>>>> generate Row style
+export const useRowStyle = genComponentStyleHook("grid", (token: GridToken) => [
+  genGridRowStyle(token),
+]);
+
+// >>>>> generate Col style
+export const useColStyle = genComponentStyleHook("grid", (token: GridToken) => [
+  {},
+]);
