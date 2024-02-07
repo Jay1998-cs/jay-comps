@@ -22,10 +22,9 @@ function flattenTokenToStr(token: any): string {
 }
 
 // 根据token对象生成哈希值字符串
-function token2key(token: any, component: string): string {
+function token2key(token: any, salt: string): string {
   const tokenStr = flattenTokenToStr(token);
-  const str = `${tokenStr}_${component}`;
-  return emotionHash(str);
+  return emotionHash(`${tokenStr}_${salt}`);
 }
 
 // 类型声明
@@ -34,10 +33,10 @@ type TokenInfoType = [theme: any, cssSelectorCls: string, tokenKey: string];
 /**
  *
  * @description 返回组件的样式配置对象token，它合并了默认和上层(最近祖先)的token
- * @param component 组件名(string), 如'Button'
+ * @param component 可选参数, 组件名(string), 如'Button'
  * @returns [mergedToken, cssSelectorCls ? cssSelectorCls : "", tokenKey]
  */
-export default function useToken(component: string): TokenInfoType {
+export default function useToken(component?: string): TokenInfoType {
   // 获取上层token
   const { token: rootDesignToken } = React.useContext(DesignTokenContext);
   // 合并默认和上层token
@@ -46,7 +45,7 @@ export default function useToken(component: string): TokenInfoType {
     [rootDesignToken]
   );
   // 生成tokenKey，用于标识组件的CSS选择器和生成style标签的id
-  const tokenKey = token2key(mergedToken, component);
+  const tokenKey = token2key(mergedToken, component || String(Math.random()));
   // 组件对应style标签中的选择器名称, 如 :where(cssSelectorCls)
   const cssSelectorCls = `css-dev-only-do-not-override-${tokenKey}`;
 
