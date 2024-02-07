@@ -140,6 +140,25 @@ const FlexWrap = () => {
   );
 };
 
+// flex属性
+const FlexAttribute = () => {
+  return (
+    <Flex vertical gap={"small"}>
+      <ul>
+        <li>注意, flex是"flex项目(元素)"属性，而不是"flex容器"</li>
+        <li>
+          flex为三个属性的简写 <b>flex: flex-grow, flex-shrink, flex-basis</b>
+        </li>
+        <li>
+          有三个关键字值, flex: initial(默认, 具体值为0 1 auto) | auto(即1 1
+          auto) | none(即0 0 auto)
+        </li>
+        <li>参考: https://developer.mozilla.org/zh-CN/docs/Web/CSS/flex</li>
+      </ul>
+    </Flex>
+  );
+};
+
 const FlexPage = () => {
   return (
     <div className="dev-flex-page">
@@ -152,6 +171,9 @@ const FlexPage = () => {
 
       <h2>换行方式(flex-wrap)</h2>
       <FlexWrap />
+
+      <h2>注意: flex属性</h2>
+      <FlexAttribute />
     </div>
   );
 };
