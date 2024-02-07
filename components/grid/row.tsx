@@ -1,11 +1,20 @@
-import React, { forwardRef, useContext, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import classNames from "classnames";
 
 import type { Breakpoint, ScreenMap } from "../_util/responsiveObserver";
 import { useMergePropByScreen } from "./hooks/useMergePropByScreen";
 import { ConfigContext } from "../config-provider";
-import RowContext from "./RowContext";
-import useResponsiveObserver from "../_util/responsiveObserver";
+import RowContext, { RowContextState } from "./RowContext";
+import useResponsiveObserver, {
+  responsiveArray,
+} from "../_util/responsiveObserver";
 // import { useRowStyle } from "./style";
 
 const RowAligns = ["top", "middle", "bottom", "stretch"] as const;
@@ -78,14 +87,90 @@ const Row = forwardRef<HTMLDivElement, RowProps>((props, ref) => {
   // to save screens info when responsiveObserve callback had been call
   const [curScreens, setCurScreens] = useState<ScreenMap>(screenMapDefault);
 
-  const [wrapCSSVar, hashId, cssVarCls] = useRowStyle(prefixCls);
-
-  // >>>>> calc responsive data
+  // >>>>> responsive data
   const mergedAlign = useMergePropByScreen(align, curScreens);
   const mergedJustify = useMergePropByScreen(justify, curScreens);
   const responseiveObserver = useResponsiveObserver();
 
+  // >>>>> side effect
+  useEffect(() => {
+    const uid = responseiveObserver.subscribe((screen) => {
+      setCurScreens(screen);
+      const currentGutter = gutterRef.current || 0;
+      if (
+        (!Array.isArray(currentGutter) && typeof currentGutter === "object") ||
+        (Array.isArray(currentGutter) &&
+          (typeof currentGutter[0] === "object" ||
+            typeof currentGutter[1] === "object"))
+      ) {
+        setScreens(screen);
+      }
+    });
+
+    return () => responseiveObserver.unsubscribe(uid);
+  }, []);
+
+  // >>>>>> calc gutter
+  const getGutter = (): [Gap, Gap] => {
+    const gutterArr: [Gap, Gap] = [undefined, undefined]; // 主轴和叉轴两个方向间隔
+    const normalizeGutter = Array.isArray(gutter)
+      ? gutter
+      : [gutter, undefined];
+    normalizeGutter.forEach((gt, idx) => {
+      if (typeof gt === "object") {
+        // 对象如 { xs: "10px", md: ... } 取与当前屏幕尺寸匹配的gutter值
+        for (let k = 0; k < responsiveArray.length; ++k) {
+          const screenSize: Breakpoint = responsiveArray[k];
+          if (screens[screenSize] && gt[screenSize] !== undefined) {
+            gutterArr[idx] = gt[screenSize] as number;
+            break;
+          }
+        }
+      } else {
+        // 非对象则直接复制，如"10px"
+        gutterArr[idx] = gt;
+      }
+    });
+
+    return gutterArr;
+  };
+
+  // >>>>> add gutter style
+  const gutterArr = getGutter(); // [horizontalGutter, verticalGutter]
+  const [gutterH, gutterV] = gutterArr;
+
+  const rowStyle: React.CSSProperties = {};
+  rowStyle.rowGap = gutterV;
+  const horizontalGutter =
+    gutterH != null && gutterH > 0 ? gutterH / -2 : undefined;
+  if (horizontalGutter) {
+    rowStyle.marginLeft = horizontalGutter;
+    rowStyle.marginRight = horizontalGutter;
+  }
+
   // >>>>>> render
+  const [wrapCSSVar, hashId, cssVarCls] = useRowStyle(prefixCls);
+
+  const classes = classNames(prefixCls, className, hashId, cssVarCls, {
+    [`${prefixCls}-no-wrap`]: wrap === false,
+    [`${prefixCls}-${mergedJustify}`]: mergedJustify,
+    [`${prefixCls}-${mergedAlign}`]: mergedAlign,
+    [`${prefixCls}-rtl`]: direction === "rtl",
+  });
+
+  const mergedStyle = {
+    ...rowStyle,
+    ...style,
+  };
+
+  const rowContext = useMemo<RowContextState>(
+    () => ({
+      gutter: [gutterH, gutterV] as [number, number],
+      wrap,
+    }),
+    [gutterH, gutterV, wrap]
+  );
+
   let rowNode = (
     <RowContext.Provider value={rowContext}>
       <div {...restProps} ref={ref} style={mergedStyle} className={classes}>

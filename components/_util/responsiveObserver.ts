@@ -80,16 +80,21 @@ const validateBreakpoints = (token: GridToken) => {
   return token;
 };
 
+/**
+ * @description 监听screen媒体查询
+ * @returns 返回一个监听媒体查询的观察者实例
+ */
 export default function useResponsiveObserver() {
   const [token] = useToken();
-  const responsiveMap: BreakpointMap = getResponsiveMap(
-    validateBreakpoints(token)
-  );
 
   return React.useMemo(() => {
+    const responsiveMap: BreakpointMap = getResponsiveMap(
+      validateBreakpoints(token)
+    );
+
     const subscribers = new Map<Number, SubscribeFunc>();
     let subUid = -1;
-    let screens = {};
+    let screens = {}; // ScreenMap: {xs: boolean, sm: boolean, ...}
 
     const instance = {
       matchHandlers: {} as {
@@ -100,8 +105,8 @@ export default function useResponsiveObserver() {
             | null;
         };
       },
-      dispatch(pointMap: ScreenMap) {
-        screens = pointMap;
+      dispatch(screenMap: ScreenMap) {
+        screens = screenMap;
         subscribers.forEach((func) => func(screens));
         return subscribers.size >= 1;
       },
@@ -112,34 +117,38 @@ export default function useResponsiveObserver() {
         func(screens);
         return subUid;
       },
-      unsubscribe(id: number) {
-        subscribers.delete(id);
+      unsubscribe(uid: number) {
+        subscribers.delete(uid);
         if (!subscribers.size) this.unregister();
       },
       unregister() {
-        Object.keys(responsiveMap).forEach((point: Breakpoint) => {
-          const matchMediaQuery = responsiveMap[point];
+        Object.keys(responsiveMap).forEach((screenSize: Breakpoint) => {
+          const matchMediaQuery = responsiveMap[screenSize];
           const handler = this.matchHandlers[matchMediaQuery];
           handler?.mql.removeListener(handler?.listener);
         });
         subscribers.clear();
       },
       rigister() {
-        Object.keys(responsiveMap).forEach((point: Breakpoint) => {
-          const matchMediaQuery = responsiveMap[point];
+        // 为每一种屏幕尺寸screenSize绑定媒体查询监听器
+        Object.keys(responsiveMap).forEach((screenSize: Breakpoint) => {
+          const matchMediaQuery = responsiveMap[screenSize]; // 媒体查询值, 如(max-width: 420px)
+          // 媒体查询监听器，媒体查询的求值结果变化时执行的回调函数
           const listener = ({ matches }: { matches: boolean }) => {
             this.dispatch({
               ...screens,
-              [point]: matches,
+              [screenSize]: matches,
             });
           };
+          // 获取匹配该媒体查询规则的对象 MediaQueryList={matches:boolean, media: string}
           const mql = window.matchMedia(matchMediaQuery);
-          mql.addListener(listener);
+          mql.addListener(listener); // 绑定监听器，当媒体查询变化时调用listener
+          // 保存相关信息
           this.matchHandlers[matchMediaQuery] = {
             mql,
             listener,
           };
-
+          // 注册后执行回调函数(响应新内容)
           listener(mql);
         });
       },
