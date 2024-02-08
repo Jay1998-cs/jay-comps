@@ -1,5 +1,6 @@
 import { GridToken } from ".";
 
+// >>>>> Row
 export const genGridRowStyle = (token: GridToken) => {
   const { componentCls } = token;
 
@@ -52,3 +53,5 @@ export const genGridRowStyle = (token: GridToken) => {
     },
   };
 };
+
+// >>>>> Col

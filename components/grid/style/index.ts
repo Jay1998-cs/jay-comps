@@ -29,12 +29,21 @@ export type GridToken = Partial<SeedToken> & {
   screenXXLMin?: number;
 };
 
+export interface GridRowToken extends GridToken {}
+
+export interface GridColToken extends GridToken {
+  gridColumns: number;
+}
+
 // >>>>> generate Row style
-export const useRowStyle = genComponentStyleHook("grid", (token: GridToken) => [
-  genGridRowStyle(token),
-]);
+export const useRowStyle = genComponentStyleHook(
+  "grid",
+  (token: GridRowToken) => [genGridRowStyle(token)]
+);
 
 // >>>>> generate Col style
-export const useColStyle = genComponentStyleHook("grid", (token: GridToken) => [
-  {},
-]);
+
+export const useColStyle = genComponentStyleHook(
+  "grid",
+  (token: GridColToken) => [{}]
+);
