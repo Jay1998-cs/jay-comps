@@ -1,7 +1,12 @@
 import { SeedToken, genComponentStyleHook } from "../../theme";
-import { genGridRowStyle } from "./genStyleByToken";
+import {
+  genGridRowStyle,
+  genGridColSharedStyle,
+  genGridColReactiveStyle,
+  genDiffScreenMediaStyle,
+} from "./genStyleByToken";
 
-export type GridToken = Partial<SeedToken> & {
+type GridToken = Partial<SeedToken> & {
   componentCls: string;
 
   // 响应式屏幕取值范围 x区间为[xMin, xMax]
@@ -42,8 +47,61 @@ export const useRowStyle = genComponentStyleHook(
 );
 
 // >>>>> generate Col style
+const screenXS = 480;
+const screenSM = 576;
+const screenMD = 768;
+const screenLG = 992;
+const screenXL = 1200;
+const screenXXL = 1600;
+
+const screenSizeData = {
+  screenXS,
+  screenXSMin: screenXS,
+  screenXSMax: screenSM - 1,
+  screenSM,
+  screenSMMin: screenSM,
+  screenSMMax: screenMD - 1,
+  screenMD,
+  screenMDMin: screenMD,
+  screenMDMax: screenLG - 1,
+  screenLG,
+  screenLGMin: screenLG,
+  screenLGMax: screenXL - 1,
+  screenXL,
+  screenXLMin: screenXL,
+  screenXLMax: screenXXL - 1,
+  screenXXL,
+  screenXXLMin: screenXXL,
+} as const;
+
+type ScreenSize = keyof typeof screenSizeData;
+
+const setScreenSizeToken = (token: GridColToken) => {
+  if (screenSizeData && typeof screenSizeData === "object") {
+    Object.keys(screenSizeData).forEach((size: ScreenSize) => {
+      token[size] = token[size] ?? screenSizeData[size];
+    });
+  }
+
+  return token;
+};
 
 export const useColStyle = genComponentStyleHook(
   "grid",
-  (token: GridColToken) => [{}]
+  (token: GridColToken) => {
+    const mergedToken: GridColToken = Object.assign(
+      {},
+      setScreenSizeToken(token),
+      {
+        gridColumns: 24, // 栅格数(屏幕被划分为24等分)
+      }
+    );
+
+    return [
+      genGridColSharedStyle(mergedToken),
+      genDiffScreenMediaStyle(mergedToken),
+      genGridColReactiveStyle(mergedToken, ""),
+      // genGridColReactiveStyle(mergedToken, "xs"),
+    ];
+  }
 );

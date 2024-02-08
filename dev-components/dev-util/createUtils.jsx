@@ -1,12 +1,13 @@
 import React from "react";
 
-export const Block = ({ color, height, width }) => {
+export const Block = ({ color, height, width, style }) => {
   return (
     <div
       style={{
         height: height || "40px",
         width: width || "100px",
         background: color || "#1677ff",
+        ...style,
       }}
     ></div>
   );
@@ -26,7 +27,7 @@ export const genDiffBlocks = (
   return blockList;
 };
 
-export const createButtons = (list = [""], setState) => {
+export const genButtons = (list = [""], setState) => {
   const nodeList = [];
   list.forEach((val) => {
     nodeList.push(

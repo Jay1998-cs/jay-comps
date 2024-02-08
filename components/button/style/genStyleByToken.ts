@@ -11,7 +11,7 @@ const genDefaultButtonStyle = (token: ButtonToken) => {
   }
 
   return {
-    // all
+    // shared
     [`${componentCls}`]: {
       border: token.border || "none",
       background: token.colorBgContainer || "#fff",
@@ -23,6 +23,7 @@ const genDefaultButtonStyle = (token: ButtonToken) => {
       fontWeight: token.fontWeight || "normal",
       cursor: "pointer",
       minHeight: "32px",
+      boxSizing: "border-box",
     },
 
     [`${componentCls}:hover`]: {

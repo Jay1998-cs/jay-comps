@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { Flex } from "../../components";
-import { genDiffBlocks, createButtons } from "../dev-util/createUtils";
+import { genDiffBlocks, genButtons } from "../dev-util/createUtils";
 
 const style = {
   width: "600px",
@@ -16,12 +16,12 @@ const FlexBasic = () => {
   const [gap, setGap] = React.useState(0);
 
   const DirectionButtons = (
-    <Flex gap={"small"}>{createButtons(["row", "column"], setDirection)}</Flex>
+    <Flex gap={"small"}>{genButtons(["row", "column"], setDirection)}</Flex>
   );
 
   const GapButtons = (
     <Flex gap={"small"}>
-      {createButtons(["small", "middle", "large"], setGap)}
+      {genButtons(["small", "middle", "large"], setGap)}
       <div>
         <label style={{ fontSize: "12px" }}>self defined: </label>
         <input
@@ -72,9 +72,9 @@ const FlexJustifyAlign = () => {
   return (
     <Flex vertical gap={"middle"}>
       <span>justify-content:</span>
-      <Flex gap={"small"}>{createButtons(justifyOpts, setJustify)}</Flex>
+      <Flex gap={"small"}>{genButtons(justifyOpts, setJustify)}</Flex>
       <span>align-items:</span>
-      <Flex gap={"small"}>{createButtons(alignOpts, setAlign)}</Flex>
+      <Flex gap={"small"}>{genButtons(alignOpts, setAlign)}</Flex>
 
       <Flex gap={"small"} justify={justify} align={align} style={style}>
         {genDiffBlocks(4)}
@@ -90,7 +90,7 @@ const FlexWrap = () => {
 
   return (
     <Flex vertical gap={"small"}>
-      <Flex gap={"small"}>{createButtons(wrapVals, setWrap)}</Flex>
+      <Flex gap={"small"}>{genButtons(wrapVals, setWrap)}</Flex>
       <Flex style={style} wrap={wrap} gap={"small"}>
         {genDiffBlocks(12)}
       </Flex>

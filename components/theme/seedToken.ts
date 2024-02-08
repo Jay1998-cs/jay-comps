@@ -54,6 +54,8 @@ export interface SeedToken extends PresetColorType {
   zIndexBase: number;
   opacityImage: number;
   zIndexPopupBase: number;
+
+  boxSizing: string;
 }
 
 const defaultSeedToken: Partial<SeedToken> = {
@@ -96,6 +98,9 @@ const defaultSeedToken: Partial<SeedToken> = {
 
   // Image
   opacityImage: 1,
+
+  // display
+  boxSizing: "border-box",
 };
 
 export default defaultSeedToken;

@@ -47,7 +47,7 @@ export default function useToken(component?: string): TokenInfoType {
   // 生成tokenKey，用于标识组件的CSS选择器和生成style标签的id
   const tokenKey = token2key(mergedToken, component || String(Math.random()));
   // 组件对应style标签中的选择器名称, 如 :where(cssSelectorCls)
-  const cssSelectorCls = `css-dev-only-do-not-override-${tokenKey}`;
+  const cssSelectorCls = `css-jay-hashId-${tokenKey}`;
 
   return [mergedToken, cssSelectorCls ? cssSelectorCls : "", tokenKey];
 }
