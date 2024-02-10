@@ -82,10 +82,11 @@ const Row = forwardRef<HTMLDivElement, RowProps>((props, ref) => {
 
   const gutterRef = useRef<Gutter | [Gutter, Gutter]>(gutter);
 
-  const [screens, setScreens] = useState<ScreenMap>(screenMapActived);
-
   // to save screens info when responsiveObserve callback had been call
   const [curScreens, setCurScreens] = useState<ScreenMap>(screenMapDefault);
+
+  // to calculate responsive gutter，like [ {xs: ..., sm: ...} ] OR [{xs: ...}, {xs: ...}]
+  const [screens, setScreens] = useState<ScreenMap>(screenMapActived);
 
   // >>>>> responsive data
   const mergedAlign = useMergePropByScreen(align, curScreens);
@@ -94,7 +95,6 @@ const Row = forwardRef<HTMLDivElement, RowProps>((props, ref) => {
 
   // >>>>> side effect
   useEffect(() => {
-    console.warn("obs: side effect");
     const uid = responseiveObserver.subscribe((screen) => {
       setCurScreens(screen);
       const currentGutter = gutterRef.current || 0;

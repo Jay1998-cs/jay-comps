@@ -6,4 +6,6 @@ export type { ConfigProviderProps, ThemeConfig } from "./config-provider";
 
 export { default as Typography } from "./typography";
 
-export {default as Flex} from "./flex"
+export { default as Flex } from "./flex";
+
+export { default as Grid } from "./grid";

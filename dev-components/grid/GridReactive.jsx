@@ -1,6 +1,9 @@
 import React from "react";
-import Row from "../../components/grid/row";
-import Col from "../../components/grid/col";
+
+import { Grid } from "../../components";
+import { useBreakpoint } from "../../components/grid";
+
+const { Row, Col } = Grid;
 
 const Container = ({ children }) => {
   const style = {
@@ -80,10 +83,24 @@ const demo3 = (
 );
 
 const GridReactive = () => {
+  const screens = useBreakpoint();
+
   return (
     <div className="dev-grid-reactive">
       <h2>Reactive: @media screen</h2>
-      <Container>{demo1}</Container>
+      {demo1}
+
+      <h2>Breakpoint</h2>
+      <div>
+        current break point:
+        {Object.entries(screens)
+          .filter((screen) => !!screen[1])
+          .map((screen) => (
+            <b color="blue" key={screen[0]}>
+              {screen[0] + " "}
+            </b>
+          ))}
+      </div>
     </div>
   );
 };

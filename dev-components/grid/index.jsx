@@ -25,7 +25,7 @@ const GridPage = () => {
           对于offset、push或pull，通过CSS属性设置边距(类似magrin、top、left等)实现。
         </li>
       </ul>
-      <GridBasic />
+      {/* <GridBasic /> */}
       <GridReactive />
     </div>
   );

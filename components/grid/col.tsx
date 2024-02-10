@@ -27,6 +27,7 @@ export interface ColProps extends React.HTMLAttributes<HTMLDivElement> {
   offset?: ColSpanType;
   push?: ColSpanType;
   pull?: ColSpanType;
+  // screen size
   xs?: ColSpanType | ColSize;
   sm?: ColSpanType | ColSize;
   md?: ColSpanType | ColSize;
@@ -75,6 +76,7 @@ const Col = React.forwardRef<HTMLDivElement, ColProps>((props, ref) => {
   // >>>>> component className
   let sizeClassObj = {}; // 存储相关尺寸(如xs, md, ..., xxl)对应的类名信息
 
+  // 为每一种screenSize(xs, sm, ..., xxl)生成各种(flex, push, pull, ...)CSS样式类名
   sizes.forEach((size) => {
     let sizeProps: ColSize = {};
     const propSize = props[size];

@@ -76,12 +76,12 @@ export const genGridColReactiveStyle = (
   sizeCls: string
 ) => {
   const { componentCls, gridColumns = 24 } = token;
+  const cls = sizeCls === "" ? `${componentCls}` : `${componentCls}-${sizeCls}`; // e.g: jay-col-md
+  console.warn(cls);
 
   const colStyleObj: any = {};
 
   for (let i = 24; i >= 0; i--) {
-    const cls =
-      sizeCls === "" ? `${componentCls}` : `${componentCls}-${sizeCls}`; // e.g: jay-col-md
     if (i === 0) {
       colStyleObj[`${cls}-${i}`] = { display: "none" };
       colStyleObj[`${cls}-push-${i}`] = { insetInlineStart: "auto" };

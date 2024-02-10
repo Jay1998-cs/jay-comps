@@ -1,7 +1,7 @@
 import React from "react";
 
-import { GridToken } from "../grid/style";
-import { useToken } from "../theme";
+import { screenSizeData } from "../grid/style";
+// import { useToken } from "../theme";
 
 export type Breakpoint = "xxl" | "xl" | "lg" | "md" | "sm" | "xs";
 export type BreakpointMap = Record<Breakpoint, string>;
@@ -23,20 +23,26 @@ export const responsiveArray: Breakpoint[] = [
  * @description 响应式屏幕尺寸表, 如 `@media` screen (max-width: 720px) 中的括号部分
  * @returns `{xs: (max-wdith: ...), md: (min-width:...), ...}`
  */
-const getResponsiveMap = (token: GridToken): BreakpointMap => ({
-  xs: `(max-width: ${token.screenXSMax}px)`, // 超小屏的最大取值，不大于该值的都属于超小屏
-  sm: `(min-width: ${token.screenSM}px)`, // 小屏的最小取值，不小于该值的都为小屏
-  md: `(min-width: ${token.screenMD}px)`,
-  lg: `(min-width: ${token.screenLG}px)`,
-  xl: `(min-width: ${token.screenXL}px)`,
-  xxl: `(min-width: ${token.screenXXL}px)`,
-});
+const getResponsiveMap = (token: any): BreakpointMap => {
+  return {
+    xs: `(max-width: ${token.screenXSMax}px)`, // 超小屏的最大取值，不大于该值的都属于超小屏
+    sm: `(min-width: ${token.screenSM}px)`, // 小屏的最小取值，不小于该值的都为小屏
+    md: `(min-width: ${token.screenMD}px)`,
+    lg: `(min-width: ${token.screenLG}px)`,
+    xl: `(min-width: ${token.screenXL}px)`,
+    xxl: `(min-width: ${token.screenXXL}px)`,
+  };
+};
 
 /**
  * @description 检验响应式screen的取值(x)是否合理(xMin <= x <= xMax 且 xMax <= next_xMin)
  * @returns 合理则返回原token，否则抛出错误
  */
-const validateBreakpoints = (token: GridToken) => {
+const validateBreakpoints = (token: any) => {
+  if (typeof token !== "object") {
+    throw new Error("fails: token is not a object");
+  }
+
   const screenToken: any = token;
   const revBreakpoints = [...responsiveArray].reverse();
   const MAX_BP_INDEX = revBreakpoints.length - 1;
@@ -48,6 +54,10 @@ const validateBreakpoints = (token: GridToken) => {
     const screen = `screen${breakpointUpper}`; // 如screenXS
     const screenMinVal = screenToken[screenMin]; // 如200表示最小尺寸为200px
     const screenVal = screenToken[screen]; // 当前尺寸大小
+
+    if (screenMinVal === undefined || screenVal === undefined) {
+      throw new Error("fails: screenMinVal or screenVal is undefined");
+    }
 
     // 抛出错误: x < xMin
     if (screenVal < screenMin) {
@@ -85,11 +95,11 @@ const validateBreakpoints = (token: GridToken) => {
  * @returns 返回一个监听媒体查询的观察者实例
  */
 export default function useResponsiveObserver() {
-  const [token] = useToken();
+  // const [token] = useToken();
 
   return React.useMemo(() => {
     const responsiveMap: BreakpointMap = getResponsiveMap(
-      validateBreakpoints(token)
+      validateBreakpoints(screenSizeData)
     );
 
     const subscribers = new Map<Number, SubscribeFunc>();
@@ -132,12 +142,12 @@ export default function useResponsiveObserver() {
       rigister() {
         // 为每一种屏幕尺寸screenSize绑定媒体查询监听器
         Object.keys(responsiveMap).forEach((screenSize: Breakpoint) => {
-          const matchMediaQuery = responsiveMap[screenSize]; // 媒体查询值, 如(max-width: 420px)
+          const matchMediaQuery = responsiveMap[screenSize]; // 媒体查询值, 如"(max-width: 420px)"
           // 媒体查询监听器，媒体查询的求值结果变化时执行的回调函数
           const listener = ({ matches }: { matches: boolean }) => {
             this.dispatch({
               ...screens,
-              [screenSize]: matches,
+              [screenSize]: matches, // true 表示匹配媒体查询值
             });
           };
           // 获取匹配该媒体查询规则的对象 MediaQueryList={matches:boolean, media: string}
@@ -156,5 +166,5 @@ export default function useResponsiveObserver() {
     };
 
     return instance;
-  }, [token]);
+  }, []);
 }

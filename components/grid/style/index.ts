@@ -6,7 +6,7 @@ import {
   genDiffScreenMediaStyle,
 } from "./genStyleByToken";
 
-type GridToken = Partial<SeedToken> & {
+export type GridToken = Partial<SeedToken> & {
   componentCls: string;
 
   // 响应式屏幕取值范围 x区间为[xMin, xMax]
@@ -54,7 +54,7 @@ const screenLG = 992;
 const screenXL = 1200;
 const screenXXL = 1600;
 
-const screenSizeData = {
+export const screenSizeData = {
   screenXS,
   screenXSMin: screenXS,
   screenXSMax: screenSM - 1,
@@ -74,9 +74,9 @@ const screenSizeData = {
   screenXXLMin: screenXXL,
 } as const;
 
-type ScreenSize = keyof typeof screenSizeData;
+export type ScreenSize = keyof typeof screenSizeData;
 
-const setScreenSizeToken = (token: GridColToken) => {
+export const setTokenScreenSize = (token: GridToken) => {
   if (screenSizeData && typeof screenSizeData === "object") {
     Object.keys(screenSizeData).forEach((size: ScreenSize) => {
       token[size] = token[size] ?? screenSizeData[size];
@@ -91,7 +91,7 @@ export const useColStyle = genComponentStyleHook(
   (token: GridColToken) => {
     const mergedToken: GridColToken = Object.assign(
       {},
-      setScreenSizeToken(token),
+      setTokenScreenSize(token),
       {
         gridColumns: 24, // 栅格数(屏幕被划分为24等分)
       }
