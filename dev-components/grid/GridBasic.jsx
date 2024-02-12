@@ -36,7 +36,7 @@ const Box = ({ children, t }) => (
 
 const wrappStyle = {
   width: "60%",
-  height: "200px",
+  height: "150px",
   padding: "10px",
   border: "1px solid gray",
 };
@@ -49,7 +49,7 @@ const Input = ({ children, text, updateFn, initValue, ...rest }) => {
         type="number"
         defaultValue={initValue || 10}
         min={0}
-        max={100}
+        max={600}
         onFocus={updateFn}
         onChange={updateFn}
         {...rest}
@@ -114,7 +114,10 @@ const GridGutter = () => {
       <Input text="span(共24栅格): " updateFn={updateSpan} initValue={12} />
       <Input text="horizontal gutter(col gap): " updateFn={updateGutterH} />
       <Input text="vertical gutter(row gap): " updateFn={updateGutterV} />
-      <div className="dev-row-container" style={{ ...wrappStyle, height: 300 }}>
+      <div
+        className="dev-row-container"
+        style={{ ...wrappStyle, height: "fit-content" }}
+      >
         <Row gutter={[gutterH, gutterV]}>
           <Col span={colCount}>
             <Box />

@@ -25,7 +25,7 @@ const Box = ({ children, t, c }) => {
   );
 };
 
-// >> 不同屏幕尺寸下，列所占屏幕总宽的百分比(flex: N%)
+// >> 不同屏幕尺寸下，列所占栅格数span(如24, 12, ...)
 const demo1 = (
   <Row gutter={[10, 10]}>
     {new Array(12).fill(0).map((_, index) => {
@@ -39,8 +39,29 @@ const demo1 = (
   </Row>
 );
 
-// >> 不同屏幕尺寸下，所占栅格数
+// >> 不同屏幕尺寸下，列的flex取值(如flex:50%)
 const demo2 = (
+  <Row gutter={[10, 10]}>
+    {new Array(4).fill(0).map((_, index) => {
+      const key = `col-${index}`;
+      return (
+        <Col
+          key={key}
+          xs={{ flex: "50%" }}
+          sm={{ flex: "30%" }}
+          md={{ flex: "20%" }}
+          lg={{ flex: "10%" }}
+          xl={{ flex: "5%" }}
+        >
+          <Box c>col</Box>
+        </Col>
+      );
+    })}
+  </Row>
+);
+
+// >> 不同屏幕尺寸下，所占栅格数
+const demo3 = (
   <Row gutter={[10, 10]}>
     <Col xs={2} sm={4} md={6} lg={8} xl={10} xxl={4}>
       <Box c>col1</Box>
@@ -55,7 +76,7 @@ const demo2 = (
 );
 
 // >> 不同屏幕尺寸下，所占栅格数 + 偏移量
-const demo3 = (
+const demo4 = (
   <Row gutter={[10, 10]}>
     <Col
       xs={{ span: 4 }}
@@ -91,19 +112,23 @@ const GridReactive = () => {
 
   return (
     <div className="dev-grid-reactive">
-      <h2>Reactive: @media screen</h2>
+      <h2>Reactive: @media </h2>
 
       <h3>reactive span</h3>
-      <div style={margin}>不同屏幕尺寸下,每列所占栅格数</div>
+      <div style={margin}>不同屏幕尺寸下,每列所占栅格数(如24, 12, 8, ...)</div>
       {demo1}
 
-      <h3>reactive span</h3>
-      <div style={margin}>不同屏幕尺寸下,不同列所占不同栅格数</div>
+      <h3>reactive flex</h3>
+      <div style={margin}>不同屏幕尺寸下,列的flex取值(如50%, 200px, ...)</div>
       {demo2}
 
-      <h3>reactive span & offset</h3>
-      <div style={margin}>不同屏幕尺寸下,列所占不同栅格数和偏移量</div>
+      <h3>reactive diff span</h3>
+      <div style={margin}>不同屏幕尺寸下,不同列所占不同栅格数</div>
       {demo3}
+
+      <h3>reactive diff span & offset</h3>
+      <div style={margin}>不同屏幕尺寸下,列所占不同栅格数和偏移量</div>
+      {demo4}
 
       <h3>Breakpoint</h3>
       <div>

@@ -6,7 +6,7 @@ import GridReactive from "./GridReactive";
 const GridPage = () => {
   return (
     <div className="dev-grid-page">
-      <h1>Grid</h1>
+      <h1>Grid 栅格布局</h1>
       <ul>
         <li>antd V5中, Grid组件基于flex弹性布局实现。</li>
         <li>

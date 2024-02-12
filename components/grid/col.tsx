@@ -69,7 +69,7 @@ const Col = React.forwardRef<HTMLDivElement, ColProps>((props, ref) => {
   } = props;
 
   const { getPrefixCls, direction } = React.useContext(ConfigContext);
-  const prefixCls = getPrefixCls("col", customizePrefixCls);
+  const prefixCls = getPrefixCls("col", customizePrefixCls); // jay-col
 
   const [wrapCSSVar, hashId, cssVarCls] = useColStyle(prefixCls);
 
@@ -98,7 +98,8 @@ const Col = React.forwardRef<HTMLDivElement, ColProps>((props, ref) => {
         sizeProps.push || sizeProps.push === 0,
       [`${prefixCls}-${size}-pull-${sizeProps.pull}`]:
         sizeProps.pull || sizeProps.pull === 0,
-      [`${prefixCls}-${size}-flex-${sizeProps.flex}`]:
+      // ${prefixCls}-${size}-flex-${sizeProps.flex}
+      [`${prefixCls}-${size}-flex`]:
         sizeProps.flex || sizeProps.flex === "auto",
       [`${prefixCls}-rtl`]: direction === "rtl",
     };
@@ -120,7 +121,7 @@ const Col = React.forwardRef<HTMLDivElement, ColProps>((props, ref) => {
   );
 
   // >>>>> calc horizontal gutter
-  const styleObj: React.CSSProperties = {};
+  const styleObj: any = {};
   const { gutter, wrap } = React.useContext(RowContext);
   if (gutter && gutter[0] > 0) {
     // Horizontal gutter use padding
@@ -130,8 +131,18 @@ const Col = React.forwardRef<HTMLDivElement, ColProps>((props, ref) => {
   }
 
   // >>>>> parse flex prop
+  sizes.forEach((size) => {
+    let sizeProp = props[size];
+    if (typeof sizeProp === "object" && sizeProp.flex) {
+      // 如 xs:{flex: 100%}, sm: {flex: 50%}，添加对应size的CSS变量
+      const flexVal = parseFlex(sizeProp.flex); // 如 0 0 50%
+      const flexCSSVar = `--${prefixCls}-${size}-flex`;
+      styleObj[flexCSSVar] = flexVal;
+    }
+  });
+
   if (flex) {
-    styleObj.flex = parseFlex(flex);
+    styleObj.flex = parseFlex(flex); // 内联flex属性
 
     // Hack for Firefox to avoid size issue
     // https://github.com/ant-design/ant-design/pull/20023#issuecomment-564389553

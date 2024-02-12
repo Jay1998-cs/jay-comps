@@ -77,7 +77,10 @@ export const genGridColReactiveStyle = (
   sizeCls: string
 ) => {
   const { componentCls, gridColumns = 24 } = token;
-  const cls = sizeCls === "" ? `${componentCls}` : `${componentCls}-${sizeCls}`; // 如 jay-col-md
+  const cls =
+    sizeCls === "" || sizeCls === undefined
+      ? `${componentCls}`
+      : `${componentCls}-${sizeCls}`; // 如 jay-col-md
 
   const colStyleObj: any = {};
 
@@ -90,6 +93,16 @@ export const genGridColReactiveStyle = (
       colStyleObj[`${cls}-order-${i}`] = { order: 0 };
       colStyleObj[`${componentCls}-push-${i}`] = { insetInlineStart: "auto" };
       colStyleObj[`${componentCls}-pull-${i}`] = { insetInlineEnd: "auto" };
+
+      // 处理类似 xs: {flex: 50%} 的情况，此时flex值存储在style标签(css变量)
+      if (sizeCls !== undefined && sizeCls !== "") {
+        if (cls.startsWith(".")) {
+          const prefixCls = cls.slice(1); // 注意: componentCls如".jay-col"，去掉"."
+          colStyleObj[`${cls}-flex`] = {
+            flex: `var(--${prefixCls}-flex)`, // 引用内联style中的css变量(在col文件中设置)
+          };
+        }
+      }
     } else {
       const flexBasis = `${(i / gridColumns) * 100}%`; // col所占空间
       colStyleObj[`${cls}-${i}`] = {
