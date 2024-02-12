@@ -5,94 +5,109 @@ import { useBreakpoint } from "../../components/grid";
 
 const { Row, Col } = Grid;
 
-const Container = ({ children }) => {
-  const style = {
-    border: "1px solid #000",
-    padding: "10px",
-    height: "200px",
-    margin: "20px",
-    resize: "horizontal",
-    overflow: "auto",
-  };
-  return <div style={style}>{children}</div>;
+const Box = ({ children, t, c }) => {
+  const bg = c ? "rgb(80,190,120)" : "#0092ff";
+  return (
+    <div
+      style={{
+        height: "30px",
+        padding: "5px",
+        lineHeight: "30px",
+        background: bg,
+        borderRadius: " 4px",
+        textAlign: "center",
+        fontSize: "14px",
+      }}
+    >
+      {t ? "column" : null}
+      {children}
+    </div>
+  );
 };
 
-const Box = ({ children, t }) => (
-  <div
-    style={{
-      height: "30px",
-      padding: "5px",
-      lineHeight: "30px",
-      background: "#0092ff",
-      borderRadius: " 4px",
-      textAlign: "center",
-      fontSize: "14px",
-    }}
-  >
-    {t ? "column" : null}
-    {children}
-  </div>
-);
-
+// >> 不同屏幕尺寸下，列所占屏幕总宽的百分比(flex: N%)
 const demo1 = (
   <Row gutter={[10, 10]}>
-    {new Array(10).fill(0).map((_, index) => {
+    {new Array(12).fill(0).map((_, index) => {
       const key = `col-${index}`;
       return (
-        <Col
-          key={key}
-          xs={{ flex: "100%" }}
-          sm={{ flex: "50%" }}
-          md={{ flex: "40%" }}
-          lg={{ flex: "20%" }}
-          xl={{ flex: "10%" }}
-        >
-          <Box>col</Box>
+        <Col key={key} xs={24} sm={12} md={8} lg={6} xl={4} xxl={2}>
+          <Box c>col</Box>
         </Col>
       );
     })}
   </Row>
 );
 
+// >> 不同屏幕尺寸下，所占栅格数
 const demo2 = (
-  <Row>
-    <Col xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
-      Col1
+  <Row gutter={[10, 10]}>
+    <Col xs={2} sm={4} md={6} lg={8} xl={10} xxl={4}>
+      <Box c>col1</Box>
     </Col>
-    <Col xs={{ span: 11, offset: 1 }} lg={{ span: 6, offset: 2 }}>
-      Col2
+    <Col xs={20} sm={16} md={12} lg={8} xl={4} xxl={16}>
+      <Box c>col2</Box>
     </Col>
-    <Col xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
-      Col3
+    <Col xs={2} sm={4} md={6} lg={8} xl={10} xxl={4}>
+      <Box c>col3</Box>
     </Col>
   </Row>
 );
 
+// >> 不同屏幕尺寸下，所占栅格数 + 偏移量
 const demo3 = (
-  <Row>
-    <Col xs={2} sm={4} md={6} lg={8} xl={10}>
-      Col
+  <Row gutter={[10, 10]}>
+    <Col
+      xs={{ span: 4 }}
+      sm={{ span: 3, offset: 3 }}
+      lg={{ span: 6, offset: 2 }}
+      xl={{ span: 11, offset: 1 }}
+    >
+      <Box c>col1</Box>
     </Col>
-    <Col xs={20} sm={16} md={12} lg={8} xl={4}>
-      Col
+    <Col
+      xs={{ span: 4 }}
+      sm={{ span: 8, offset: 3 }}
+      lg={{ span: 6, offset: 2 }}
+      xl={{ span: 7, offset: 1 }}
+    >
+      <Box c>col2</Box>
     </Col>
-    <Col xs={2} sm={4} md={6} lg={8} xl={10}>
-      Col
+    <Col
+      xs={{ span: 4 }}
+      sm={{ span: 3, offset: 3 }}
+      lg={{ span: 6, offset: 2 }}
+      xl={{ span: 3, offset: 1 }}
+    >
+      <Box c>col3</Box>
     </Col>
   </Row>
 );
 
+// >>>>> Reactive grid page
 const GridReactive = () => {
   const screens = useBreakpoint();
+  const margin = { margin: "10px" };
 
   return (
     <div className="dev-grid-reactive">
       <h2>Reactive: @media screen</h2>
+
+      <h3>reactive span</h3>
+      <div style={margin}>不同屏幕尺寸下,每列所占栅格数</div>
       {demo1}
 
-      <h2>Breakpoint</h2>
+      <h3>reactive span</h3>
+      <div style={margin}>不同屏幕尺寸下,不同列所占不同栅格数</div>
+      {demo2}
+
+      <h3>reactive span & offset</h3>
+      <div style={margin}>不同屏幕尺寸下,列所占不同栅格数和偏移量</div>
+      {demo3}
+
+      <h3>Breakpoint</h3>
       <div>
-        current break point:
+        current break point：
         {Object.entries(screens)
           .filter((screen) => !!screen[1])
           .map((screen) => (

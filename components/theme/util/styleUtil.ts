@@ -7,14 +7,15 @@ export type ContainerType = Element | ShadowRoot;
 
 export const attributeName = "data-css-hash";
 
-// 返回CSS样式选择器，形如，keyStr:where(selector)
-export function injectHashSelector(key: string, cssSelectorCls: string) {
-  if (!cssSelectorCls) return key;
+// 返回CSS样式选择器，形如:where(selector).className
+export function injectHashSelector(className: string, hashId: string) {
+  if (!hashId) return className;
 
-  const hashClassName = `.${cssSelectorCls}`;
-  const selector = `:where(${hashClassName})`;
+  if (className !== "" && className.trim().startsWith("@media")) {
+    return className;
+  }
 
-  return `${selector}${key}`;
+  return `:where(.${hashId})${className}`;
 }
 
 // 解析、返回CSS样式字符串

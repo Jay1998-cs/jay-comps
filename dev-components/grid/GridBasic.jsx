@@ -190,16 +190,16 @@ const GridPushPull = () => {
   return (
     <Flex vertical gap={20}>
       <Row>
-        <Col span={4} push={6}>
-          <Box>col-span4-push6</Box>
+        <Col span={10} push={6}>
+          <Box>col-span10-push6</Box>
         </Col>
       </Row>
       <Row gutter={20}>
-        <Col span={18} push={6}>
-          <Box>col1-span18-push6</Box>
+        <Col span={16} push={8}>
+          <Box>col1-span16-push8</Box>
         </Col>
-        <Col span={6} pull={18}>
-          <Box>col2-span6-pull18</Box>
+        <Col span={8} pull={16}>
+          <Box>col2-span8-pull16</Box>
         </Col>
       </Row>
     </Flex>

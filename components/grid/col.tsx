@@ -79,7 +79,7 @@ const Col = React.forwardRef<HTMLDivElement, ColProps>((props, ref) => {
   // 为每一种screenSize(xs, sm, ..., xxl)生成各种(flex, push, pull, ...)CSS样式类名
   sizes.forEach((size) => {
     let sizeProps: ColSize = {};
-    const propSize = props[size];
+    const propSize = props[size]; // 可能为数字(表示占栅格数span)，或者对象:{span:..., offset:...}、{flex: ...}
     if (typeof propSize === "number") {
       sizeProps.span = propSize; // 如 xs:3 -> {span:3} 表示Col所占栅格数
     } else if (typeof propSize === "object") {

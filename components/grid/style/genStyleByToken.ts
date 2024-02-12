@@ -71,13 +71,13 @@ export const genGridColSharedStyle = (token: GridColToken) => {
   };
 };
 
+// >>>>> 24栅格布局
 export const genGridColReactiveStyle = (
   token: GridColToken,
   sizeCls: string
 ) => {
   const { componentCls, gridColumns = 24 } = token;
-  const cls = sizeCls === "" ? `${componentCls}` : `${componentCls}-${sizeCls}`; // e.g: jay-col-md
-  console.warn(cls);
+  const cls = sizeCls === "" ? `${componentCls}` : `${componentCls}-${sizeCls}`; // 如 jay-col-md
 
   const colStyleObj: any = {};
 
@@ -113,6 +113,7 @@ export const genGridColReactiveStyle = (
   return colStyleObj;
 };
 
+// >>>>> 媒体查询-响应式屏幕尺寸
 const genGridMediaStyle = (
   token: GridColToken,
   screenSize: number,
