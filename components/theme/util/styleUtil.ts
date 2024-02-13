@@ -1,3 +1,5 @@
+import { AnimationConfigType } from "../../style/animations";
+
 export interface ParseConfig {
   cssSelectorCls?: string;
   path?: string;
@@ -98,21 +100,42 @@ export function injectCSS(css: string) {
   return styleNode;
 }
 
+// 将animation代码插入style标签
+function injectAnimation(
+  style: HTMLStyleElement,
+  animationConfig: AnimationConfigType
+) {
+  if (typeof animationConfig !== "object") {
+    return;
+  }
+
+  const animations = Object.values(animationConfig).join(" ");
+  if (animations === "") {
+    return;
+  }
+
+  style.innerHTML = `${animations} ${style.innerHTML}`;
+}
+
 // 获取已存在的style节点，没有则创建新节点，并且注入最新CSS样式
-export function updateCSS(css: string, key: string) {
+export function updateCSS(
+  css: string,
+  hashId: string,
+  animationConfig: AnimationConfigType
+) {
   // 若样式节点已存在，且样式已更新，则更新样式节点
-  const existStyleNode = findStyleNode(key);
+  const existStyleNode = findStyleNode(hashId);
   if (existStyleNode) {
     if (existStyleNode.innerHTML !== css) {
       existStyleNode.innerHTML = css;
-      // console.error("==> 已存在该style标签,但CSS不同、已更新CSS");
     }
-    // console.error("==> 已存在该style标签且CSS相同");
     return;
   }
   // 样式节点不存在，创建样式节点并注入CSS样式字符串
-  const newStyleNode = injectCSS(css);
+  const styleNode = injectCSS(css);
+  // 为特定组件在style标签中添加animation
+  injectAnimation(styleNode, animationConfig);
   // 为样式节点设置标识属性
-  newStyleNode.setAttribute(attributeName, key);
-  return newStyleNode;
+  styleNode.setAttribute(attributeName, hashId);
+  return styleNode;
 }

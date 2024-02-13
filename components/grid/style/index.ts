@@ -89,7 +89,7 @@ export const setTokenScreenSize = (token: GridToken) => {
 export const useColStyle = genComponentStyleHook(
   "grid",
   (token: GridColToken) => {
-    const mergedToken: GridColToken = Object.assign(
+    const gridToken: GridColToken = Object.assign(
       {},
       setTokenScreenSize(token),
       {
@@ -99,10 +99,10 @@ export const useColStyle = genComponentStyleHook(
 
     // 注意【顺序】，例如，媒体查询(media)放在最后【权重相同时后定义CSS优先】以响应屏幕尺寸
     return [
-      genGridColSharedStyle(mergedToken),
-      genGridColReactiveStyle(mergedToken, ""), // 默认、非响应式的24栅格布局
-      genGridColReactiveStyle(mergedToken, "xs"), // xs为@media (max-width) 其他为min-width，需要单独创建
-      genDiffScreenMediaStyle(mergedToken), // 响应式(@media)的24栅格布局
+      genGridColSharedStyle(gridToken),
+      genGridColReactiveStyle(gridToken, ""), // 默认、非响应式的24栅格布局
+      genGridColReactiveStyle(gridToken, "xs"), // xs为@media (max-width) 其他为min-width，需要单独创建
+      genDiffScreenMediaStyle(gridToken), // 响应式(@media)的24栅格布局
     ];
   }
 );

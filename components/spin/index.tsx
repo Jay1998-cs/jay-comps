@@ -41,14 +41,17 @@ function shouldDelay(spinning?: boolean, delay?: number): boolean {
 // >>>>> indicator
 let defaultIndicator: React.ReactNode = null;
 
+/**
+ * @returns 返回加载中的样式组件(由三个dot组成)
+ */
 function renderIndicator(
   prefixCls: string,
   indicator: SpinProps["indicator"]
 ): React.ReactNode {
   const dotClassName = `${prefixCls}-dot`;
 
-  if (indicator === undefined || indicator === null) {
-    return null;
+  if (indicator === null) {
+    return null; //【注】undefined表示默认、会显示spin，显式地设置null才隐藏
   }
 
   if (isValidElement(indicator)) {
@@ -68,6 +71,7 @@ function renderIndicator(
       <i key={1} className={`${prefixCls}-dot-item`} />
       <i key={2} className={`${prefixCls}-dot-item`} />
       <i key={3} className={`${prefixCls}-dot-item`} />
+      <i key={4} className={`${prefixCls}-dot-item`} />
     </span>
   );
 }
@@ -81,7 +85,7 @@ const Spin: SpinType = (props) => {
     wrapperClassName,
     size = "default",
     fullscreen,
-    spinning: customSpinning = false,
+    spinning: customSpinning = true,
     delay = 0,
     tip,
     style,
@@ -97,7 +101,7 @@ const Spin: SpinType = (props) => {
   const [wrapCSSVar, hashId, cssVarCls] = useStyle(prefixCls);
 
   const [spinning, setSpinning] = useState<boolean>(
-    () => customSpinning && shouldDelay(customSpinning, delay)
+    () => customSpinning && !shouldDelay(customSpinning, delay)
   );
 
   const isNested = useMemo(() => {
@@ -106,8 +110,8 @@ const Spin: SpinType = (props) => {
 
   // >>>>> delay
   useEffect(() => {
-    // 添加延迟
-    if (shouldDelay(customSpinning, delay)) {
+    // 添加spin效果
+    if (customSpinning) {
       const delaySpinFunc = debounce(delay, () => {
         setSpinning(true);
       });
@@ -120,7 +124,7 @@ const Spin: SpinType = (props) => {
       };
     }
 
-    // 取消延迟(x 多余，因为执行到此，customSpinning为false则spinning也为false)
+    // 取消spin(x 多余，因为执行到此，customSpinning为false则spinning也为false)
     setSpinning(false);
   }, [customSpinning, delay]);
 
@@ -138,7 +142,7 @@ const Spin: SpinType = (props) => {
       [`${prefixCls}-spinning`]: spinning,
       [`${prefixCls}-fullscreen`]: fullscreen,
       [`${prefixCls}-fullscreen-show`]: fullscreen && spinning,
-      [`${prefixCls}-show-text`]: !!tip,
+      [`${prefixCls}-show-tip`]: !!tip,
       [`${prefixCls}-rtl`]: direction === "rtl",
     }
   );

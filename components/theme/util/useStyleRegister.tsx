@@ -4,6 +4,7 @@ import emotionHash from "@emotion/hash";
 import { parseStyle, removeStyleNode, updateCSS } from "./styleUtil";
 import StyleContext from "../StyleContext";
 import { genPathKey, KeyType } from "../Cache";
+import { animationMap } from "../../style/animations";
 
 export type CSSVarRegisterProps = {
   pathKeys: KeyType[];
@@ -32,7 +33,16 @@ const genStyle = (
   const config = { cssSelectorCls, path: pathKeyStr };
   const parsedStyleStr = parseStyle(styleObj, config);
   const styleId = emotionHash(pathKeyStr + parsedStyleStr); // style标签的data-css-hash属性值
-  updateCSS(parsedStyleStr, styleId);
+
+  let animationConfig = {};
+  pathKeys.forEach((key) => {
+    let keyStr = key.toLowerCase();
+    if (Object.keys(animationMap).includes(keyStr)) {
+      animationConfig = animationMap[keyStr];
+    }
+  });
+
+  updateCSS(parsedStyleStr, styleId, animationConfig);
 
   return styleId;
 };

@@ -35,6 +35,7 @@ export interface SeedToken extends PresetColorType {
   color: string;
   fontSize: number;
   fontWeight: string;
+  fontFamily: string;
   fontPrimaryWeight: number; // primary button
 
   // line
@@ -51,9 +52,9 @@ export interface SeedToken extends PresetColorType {
 
   // other
   controlHeight: number;
-  zIndexBase: number;
-  opacityImage: number;
-  zIndexPopupBase: number;
+  zIndexBase: string;
+  opacityImage: string;
+  zIndexPopupBase: string;
 
   boxSizing: string;
 }
@@ -93,11 +94,11 @@ const defaultSeedToken: Partial<SeedToken> = {
   controlHeight: 32,
 
   // zIndex
-  zIndexBase: 0,
-  zIndexPopupBase: 1000,
+  zIndexBase: "0",
+  zIndexPopupBase: "1000",
 
   // Image
-  opacityImage: 1,
+  opacityImage: "1",
 
   // display
   boxSizing: "border-box",
