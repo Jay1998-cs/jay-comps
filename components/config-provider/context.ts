@@ -56,6 +56,7 @@ const defaultGetPrefixCls = (suffixCls?: string, customPrefixCls?: string) => {
 //////////////////////////////////////////////////////////////////////////////
 // 全局上下文对象 ConfigConsumer 的属性
 export interface ConfigConsumerProps {
+  // global config
   rootPrefixCls?: string;
   iconPrefixCls: string;
   getPrefixCls: (suffixCls?: string, customizePrefixCls?: string) => string;
@@ -66,6 +67,7 @@ export interface ConfigConsumerProps {
   button?: ButtonConfig;
   typography?: ComponentStyleConfig;
   flex?: FlexConfig;
+  spin?: ComponentStyleConfig;
 }
 
 // 全局上下文对象 ConfigContext
