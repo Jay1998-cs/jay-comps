@@ -41,7 +41,7 @@ export interface QRCodeProps extends QRProps {
   iconSize?: number;
   bordered?: boolean;
   errorLevel?: "L" | "M" | "Q" | "H";
-  status?: "active" | "expired" | "loading";
+  status?: "active" | "expired" | "loading" | "scanned";
   onRefresh?: () => void;
 }
 
@@ -53,7 +53,7 @@ const QRCode: React.FC<QRCodeProps> = (props) => {
     value,
     type = "canvas",
     size = 160,
-    color = "#1677ff", // token.colorText
+    color = "#000", // token.colorText
     bgColor = "transparent",
     icon = "",
     iconSize = 40,
@@ -70,8 +70,9 @@ const QRCode: React.FC<QRCodeProps> = (props) => {
   const [wrapCSSVar, hashId, cssVarCls] = useStyle(prefixCls);
 
   // >>>>> setting
-  const expiredTip = "二维码过期(Expired)";
-  const refreshTip = "点击刷新";
+  const expiredTip = "QRCode Expired";
+  const refreshTip = "Refresh";
+  const scannedTip = "Scanned";
 
   const imageSettings: QRProps["imageSettings"] = {
     src: icon,
@@ -92,13 +93,6 @@ const QRCode: React.FC<QRCodeProps> = (props) => {
     imageSettings: icon ? imageSettings : undefined,
   };
 
-  const mergedStyle = {
-    ...style,
-    width: size,
-    height: size,
-    backgroundColor: bgColor,
-  };
-
   // >>>>> className
   const qrcodeClassName = classNames(
     prefixCls,
@@ -112,12 +106,24 @@ const QRCode: React.FC<QRCodeProps> = (props) => {
   );
 
   // >>>>> render
+  const mergedStyle = {
+    ...style,
+    width: size,
+    height: size,
+    backgroundColor: bgColor,
+  };
+
   const loadingContent = status === "loading" ? <Spin /> : null;
+
+  const scannedContent =
+    status === "scanned" ? (
+      <p className={`${prefixCls}-scanned-tip`}>{scannedTip}</p>
+    ) : null;
 
   const expiredContent =
     status === "expired" ? (
       <>
-        <p className={`${prefixCls}-expired`}>{expiredTip}</p>
+        <p className={`${prefixCls}-expired-tip`}>{expiredTip}</p>
         {onRefresh && (
           <Button type="link" onClick={onRefresh} icon={<ReloadOutlined />}>
             {refreshTip}
@@ -131,6 +137,7 @@ const QRCode: React.FC<QRCodeProps> = (props) => {
       {status !== "active" && (
         <div className={`${prefixCls}-mask`}>
           {loadingContent}
+          {scannedContent}
           {expiredContent}
         </div>
       )}

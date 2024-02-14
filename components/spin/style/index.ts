@@ -13,13 +13,18 @@ export type SpinToken = TokenType & {
 };
 
 const useStyle = genComponentStyleHook("spin", (token: SpinToken) => {
-  const spinToken: SpinToken = Object.assign({}, token, {
-    contentHeight: 400,
-    dotSize: 20,
-    dotSizeSM: 14,
-    dotSizeLG: 32,
-    spinTipColor: token.spinTipColor || token.colorPrimary || "#1677ff",
-  });
+  const spinToken: SpinToken = Object.assign(
+    {
+      spinTipColor: token.spinTipColor || token.colorPrimary || "#1677ff",
+    },
+    token,
+    {
+      contentHeight: 400,
+      dotSize: 20,
+      dotSizeSM: 14,
+      dotSizeLG: 32,
+    }
+  );
 
   return [genSpinStyle(spinToken)];
 });

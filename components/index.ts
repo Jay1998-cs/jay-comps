@@ -12,3 +12,5 @@ export { default as Grid } from "./grid";
 export { useBreakpoint } from "./grid";
 
 export { default as Spin } from "./spin";
+
+export { default as QRCode } from "./qrcode";

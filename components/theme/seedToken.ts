@@ -49,6 +49,16 @@ export interface SeedToken extends PresetColorType {
 
   // padding
   padding: string;
+  paddingXS: string;
+  paddingSM: string;
+  paddingMD: string;
+  paddingLG: string;
+
+  // margin
+  marginXS: string;
+  marginSM: string;
+  marginMD: string;
+  marginLG: string;
 
   // other
   controlHeight: number;
@@ -79,6 +89,16 @@ const defaultSeedToken: Partial<SeedToken> = {
 
   // padding
   padding: "4px 16px",
+  paddingXS: "6px",
+  paddingSM: "10px",
+  paddingMD: "14px",
+  paddingLG: "18px",
+
+  // margin
+  marginXS: "6px",
+  marginSM: "10px",
+  marginMD: "14px",
+  marginLG: "18px",
 
   // border
   border: "1px solid rgba(0,0,0,0.5)",
