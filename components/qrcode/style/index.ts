@@ -4,6 +4,6 @@ export type QRCodeToken = TokenType & {
   componentCls: string;
 };
 
-const useStyle = (token: QRCodeToken) => {
-  return genComponentStyleHook("qrcode", (token: QRCodeToken) => [{}]);
-};
+const useStyle = genComponentStyleHook("qrcode", (token: QRCodeToken) => [{}]);
+
+export default useStyle;

@@ -27,11 +27,9 @@ export interface SpinProps {
   children?: React.ReactNode;
 }
 
-export type SpinType = React.FC<
-  SpinProps & {
-    setDefaultIndicator: (indicator: React.ReactNode) => void;
-  }
->;
+export type SpinType = React.FC<SpinProps> & {
+  setDefaultIndicator: (indicator: React.ReactNode) => void;
+};
 
 // 判断是否需要延迟加载spin
 function shouldDelay(spinning?: boolean, delay?: number): boolean {
@@ -195,6 +193,10 @@ const Spin: SpinType = (props) => {
   }
 
   return spinElement;
+};
+
+Spin.setDefaultIndicator = (indicator: React.ReactNode) => {
+  defaultIndicator = indicator;
 };
 
 export default Spin;

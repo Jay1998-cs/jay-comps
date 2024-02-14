@@ -26,7 +26,7 @@ export default function genComponentStyleHook(
       return styleFn(Object.assign({ componentCls }, token)); // 闭包，引用token
     };
 
-    const wrapCSSVar = useStyleRegister(info, genStyleObjFn);
+    const wrapCSSVar = useStyleRegister(info, genStyleObjFn); // 注入样式的容器组件
 
     let cssVarCls = ""; // ? 待完善[可能是由token铺平再生成的hash值]
 
