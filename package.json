@@ -72,6 +72,7 @@
     "@types/throttle-debounce": "^5.0.2",
     "classnames": "^2.5.1",
     "copy-to-clipboard": "^3.3.3",
+    "qrcode.react": "^3.1.0",
     "rc-motion": "^2.9.0",
     "rc-resize-observer": "^1.4.0",
     "rc-util": "^5.38.1",
