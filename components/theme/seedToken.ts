@@ -24,7 +24,6 @@ export interface SeedToken extends PresetColorType {
   colorError: string;
   colorInfo: string;
   colorBgContainer: string;
-  // colorHover: string; // 所有按钮悬浮时的颜色
 
   colorPrimaryText: string; // primary button
 
@@ -60,8 +59,20 @@ export interface SeedToken extends PresetColorType {
   marginMD: string;
   marginLG: string;
 
-  // other
+  // height
   controlHeight: number;
+  controlHeightSM: number;
+  controlHeightLG: number;
+
+  // hover
+  hoverBorderColor: string;
+  hoverBg: string;
+
+  // disabled
+  colorBgContainerDisabled: string;
+  colorTextDisabled: string;
+
+  // other
   zIndexBase: string;
   opacityImage: string;
   zIndexPopupBase: string;
@@ -102,6 +113,7 @@ const defaultSeedToken: Partial<SeedToken> = {
 
   // border
   border: "1px solid rgba(0,0,0,0.5)",
+  colorBorder: "#d9d9d9",
 
   // Radius
   borderRadius: 6,
@@ -112,6 +124,8 @@ const defaultSeedToken: Partial<SeedToken> = {
 
   // Control Base
   controlHeight: 32,
+  controlHeightSM: 24,
+  controlHeightLG: 40,
 
   // zIndex
   zIndexBase: "0",
@@ -122,6 +136,14 @@ const defaultSeedToken: Partial<SeedToken> = {
 
   // display
   boxSizing: "border-box",
+
+  // hover
+  hoverBorderColor: "#1677ff",
+  hoverBg: "#fff",
+
+  // disabled
+  colorBgContainerDisabled: "rgba(0,0,0,0.04)",
+  colorTextDisabled: "rgba(0,0,0,0.25)",
 };
 
 export default defaultSeedToken;
