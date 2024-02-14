@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ConfigProvider, Flex, QRCode } from "../../components";
+import { Flex, QRCode } from "../../components";
 
 const antdIconSrc =
   "https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg";
