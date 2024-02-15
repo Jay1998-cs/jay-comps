@@ -6,7 +6,8 @@ import React from "react";
 // import GridPage from "./grid";
 // import SpinPage from "./spin";
 // import QRCodePage from "./qrcode";
-import InputPage from "./input";
+// import InputPage from "./input";
+import ModalPage from "./modal";
 
 const App = () => {
   // 引入待调试的组件页
@@ -18,7 +19,8 @@ const App = () => {
   // devPage = <GridPage />;
   // devPage = <SpinPage />;
   // devPage = <QRCodePage />;
-  devPage = <InputPage />;
+  // devPage = <InputPage />;
+  devPage = <ModalPage />;
 
   return devPage;
 };

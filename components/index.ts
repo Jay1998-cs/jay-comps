@@ -14,3 +14,7 @@ export { useBreakpoint } from "./grid";
 export { default as Spin } from "./spin";
 
 export { default as QRCode } from "./qrcode";
+
+export { default as Input } from "./input";
+
+export { default as Modal } from "./modal";

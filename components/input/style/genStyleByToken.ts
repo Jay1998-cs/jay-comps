@@ -180,11 +180,3 @@ export const genPrefixAndSuffixInputStyle = (token: InputToken) => {
     },
   };
 };
-
-// export const genBasicInputStyle = (token: InputToken) => {
-//   const { componentCls: cls } = token;
-
-//   return {
-//     [cls]: {},
-//   };
-// };
