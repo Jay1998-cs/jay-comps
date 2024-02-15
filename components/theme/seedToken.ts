@@ -21,7 +21,9 @@ export interface SeedToken extends PresetColorType {
   colorPrimary: string;
   colorSuccess: string;
   colorWarning: string;
+  colorHoverWarning: string;
   colorError: string;
+  colorHoverError: string;
   colorInfo: string;
   colorBgContainer: string;
 
@@ -38,6 +40,7 @@ export interface SeedToken extends PresetColorType {
   fontPrimaryWeight: number; // primary button
 
   // line
+  lineHeight: string;
   lineWidth: number;
   lineType: string;
 
@@ -119,6 +122,7 @@ const defaultSeedToken: Partial<SeedToken> = {
   borderRadius: 6,
 
   // Line
+  lineHeight: "1.5714",
   lineWidth: 1,
   lineType: "solid",
 
@@ -140,6 +144,8 @@ const defaultSeedToken: Partial<SeedToken> = {
   // hover
   hoverBorderColor: "#1677ff",
   hoverBg: "#fff",
+  colorHoverWarning: "#ffd666",
+  colorHoverError: "#ffa39e",
 
   // disabled
   colorBgContainerDisabled: "rgba(0,0,0,0.04)",

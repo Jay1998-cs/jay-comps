@@ -16,13 +16,16 @@ export interface InternalInputProps {
   disabled?: boolean;
   status?: InputStatus;
   bordered?: boolean;
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
+  fillWrapper?: boolean;
   style?: React.CSSProperties;
   [key: `data-${string}`]: string | undefined;
 }
 
 type MergedInputAttributes = Omit<
   React.HTMLAttributes<HTMLElement> & React.InputHTMLAttributes<HTMLElement>,
-  "size"
+  "size" | "prefix"
 >;
 
 // export type InputProps = InternalInputProps & MergedInputAttributes;
@@ -37,7 +40,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     disabled,
     status,
     bordered = true,
-    style = {},
+    prefix,
+    suffix,
+    fillWrapper,
+    style: customStyle = {},
     ...restProps
   } = props;
 
@@ -54,24 +60,58 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     hashId,
     cssVarCls,
     {
+      [`${prefixCls}-outline`]: bordered && !disabled,
       [`${prefixCls}-sm`]: size === "small",
       [`${prefixCls}-lg`]: size === "large",
+      [`${prefixCls}-status-error`]: status === "error",
+      [`${prefixCls}-status-warning`]: status === "warning",
       [`${prefixCls}-borderless`]: !bordered,
       [`${prefixCls}-disabled`]: disabled,
       [`${prefixCls}-rtl`]: direction === "rtl",
     }
   );
 
+  // >>>>> prefix & suffix
+  const prefixElem = prefix ? (
+    <span className={prefix ? `${prefixCls}-prefix` : ""}>{prefix}</span>
+  ) : null;
+  const suffixElem = suffix ? (
+    <span className={suffix ? `${prefixCls}-suffix` : ""}>{suffix}</span>
+  ) : null;
+
   // >>>>> render
-  const inputNode = (
+  let inputNode = (
     <input
       className={inputClassName}
       ref={ref}
-      style={style}
+      style={{ ...customStyle }}
       disabled={disabled}
       {...restProps}
     />
   );
+
+  // append prefix & suffix
+  if (prefix || suffix) {
+    const wrapperName = `${prefixCls}-affix-wrapper`;
+    const wrapperClassName = classNames(wrapperName, hashId, {
+      [`${prefixCls}-outline`]: bordered && !disabled,
+      [`${prefixCls}-status-error`]: status === "error",
+      [`${prefixCls}-status-warning`]: status === "warning",
+      [`${wrapperName}-status-error`]: status === "error",
+      [`${wrapperName}-status-warning`]: status === "warning",
+      [`${wrapperName}-disabled`]: disabled,
+      [`${wrapperName}-borderless`]: !bordered,
+      [`${wrapperName}-fillWrapper`]: fillWrapper,
+    });
+
+    inputNode = (
+      <span className={wrapperClassName}>
+        {prefixElem}
+        {inputNode}
+        {suffixElem}
+      </span>
+    );
+  }
 
   if (typeof WrapCSSVar === "function") {
     return WrapCSSVar(inputNode);
