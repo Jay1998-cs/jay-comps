@@ -39,3 +39,12 @@ export function cloneElement(
 ): React.ReactElement {
   return replaceElement(element, element, props) as React.ReactElement;
 }
+
+/**
+ * @returns 若不是undefined、null和空串则返回true
+ */
+export function hasContent(target: React.ReactNode): boolean {
+  const isEmptyStr = typeof target === "string" && target.trim() === "";
+
+  return target !== undefined && target !== null && !isEmptyStr;
+}

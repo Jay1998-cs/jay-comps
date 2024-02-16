@@ -21,6 +21,15 @@ export const genModalBasicStyle = (token: ModalToken) => {
       zIndex: token.zIndexPopupBase || 1000,
       overflow: "hidden",
       outline: "none",
+      display: "none", // 默认隐藏
+    },
+
+    [`${cls}-root ${cls}-wrap${cls}-close`]: {
+      display: "none",
+    },
+
+    [`${cls}-root ${cls}-wrap${cls}-open`]: {
+      display: "block",
     },
 
     // modal
@@ -30,6 +39,11 @@ export const genModalBasicStyle = (token: ModalToken) => {
       top: "120px",
       margin: "0 auto",
       width: "auto",
+    },
+
+    [`${cls}-root ${cls}-wrap${cls}-centered ${cls}`]: {
+      top: "50%",
+      transform: "translateY(-50%)",
     },
 
     // content
@@ -47,7 +61,7 @@ export const genModalBasicStyle = (token: ModalToken) => {
     // close
     [`${cls} ${cls}-close`]: {
       position: "absolute",
-      top: "16px",
+      top: "6px",
       insetInlineEnd: "16px",
       cursor: "pointer",
       zIndex: "1010",
@@ -68,10 +82,26 @@ export const genModalBasicStyle = (token: ModalToken) => {
       color: "rgba(0,0,0,1)",
     },
 
+    // header
+    [`${cls} ${cls}-header`]: {
+      padding: "0 24px 0 0",
+    },
+
+    [`${cls} ${cls}-header ${cls}-title`]: {
+      fontWeight: "600",
+      fontSize: "16px",
+      wordWrap: "break-word",
+    },
+
+    // body
+    [`${cls} ${cls}-body`]: {
+      marginTop: token.marginMD || "14px",
+    },
+
     // footer
     [`${cls} ${cls}-footer`]: {
       padding: "0",
-      marginTop: token.marginMD || "12px",
+      marginTop: token.marginMD || "14px",
       borderRadius: "0",
       borderTop: "none",
       background: "transparent",
