@@ -2,7 +2,7 @@ import classNames from "classnames";
 import React, { LegacyRef, forwardRef, useContext } from "react";
 import { ConfigContext } from "../config-provider";
 
-export type Key = string | number | bigint;
+export type Key = string | number;
 
 export interface TreeNodeAttrubute {
   prefixCls?: string;
@@ -19,7 +19,7 @@ export interface TreeNodeAttrubute {
   eventKey: string; // ?
   children: React.ReactNode;
   style?: React.CSSProperties;
-  // pos: string; // ?
+  pos?: string; // 位置信息，如0_0表示第二层
   // dragOver: boolean;
   // dragOverGapTop: boolean;
   // dragOverGapBottom: boolean;
@@ -38,10 +38,10 @@ export interface TreeNodeAttrubute {
 // }
 
 export interface TreeNodeProps {
+  key: Key;
   prefixCls?: string;
   className?: string;
   title?: React.ReactNode;
-  key?: Key;
   expanded?: boolean;
   selected?: boolean;
   checked?: boolean;
@@ -54,8 +54,8 @@ export interface TreeNodeProps {
   eventKey?: string;
   loading?: boolean;
   icon?: ((treeNode: TreeNodeAttrubute) => React.ReactNode) | React.ReactNode;
-  children?: React.ReactNode;
   style?: React.CSSProperties;
+  children?: React.ReactNode; // remove ？树节点不包裹内容
 }
 
 export type TreeNodeType = TreeNodeProps;
@@ -64,8 +64,13 @@ export type IconType =
   | React.ReactNode
   | ((props: TreeNodeProps) => React.ReactNode);
 
+export type TreeNodeTitle =
+  | React.ReactNode
+  | ((data: DataNode) => React.ReactNode);
+
 export interface DataNode {
   key: Key;
+  title?: TreeNodeTitle;
   className?: string;
   children?: DataNode[];
   checkable?: boolean;
@@ -76,6 +81,11 @@ export interface DataNode {
   selectable?: boolean;
   switcherIcon?: IconType;
   style?: React.CSSProperties;
+  pos?: string;
+
+  parentKeys?: Key[];
+  parentTitles?: TreeNodeTitle[];
+  childKeys: Key[];
 }
 
 export interface TreeNodeBaseEvent {
@@ -111,7 +121,6 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
     className,
     style,
     children,
-    key,
     title,
     expanded,
     selected,
@@ -131,18 +140,18 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
   const treeNodeClassName = classNames(className, prefixCls);
 
   // >>>>> indent
-  const indent = <span className={`${prefixCls}-indent`}>indent</span>;
+  const indent = <span className={`${prefixCls}-indent`}>口</span>;
 
   // >>>>> switcher
-  const switcher = <span className={`${prefixCls}-switcher`}>switcher</span>;
+  const switcher = <span className={`${prefixCls}-switcher`}>{">"}</span>;
 
   // >>>>> checkbox
-  const checkbox = <span className={`${prefixCls}-checkbox`}>checkbox</span>;
+  const checkbox = <span className={`${prefixCls}-checkbox`}>{"✔"}</span>;
 
   // >>>>> render
   const treeNodeContent = (
     <span className={`${prefixCls}-content-wrapper`}>
-      <span className={`${prefixCls}-title`}></span>
+      <span className={`${prefixCls}-title`}>{title}</span>
       {children}
     </span>
   );

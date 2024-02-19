@@ -395,6 +395,7 @@ function getNewState(props) {
   return { obj, list, expandedArrIds, checkedArrIds };
 }
 
+// treeData平铺为list
 function resolveTreeDataToList(treeData, keysMap) {
   const { id: kId, children, text } = keysMap;
   const list = [];

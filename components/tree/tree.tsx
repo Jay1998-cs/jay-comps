@@ -1,6 +1,10 @@
-import React from "react";
+import React, { forwardRef, useContext } from "react";
 
-import { DataNode, IconType, Key } from "./treeNode";
+import TreeNode, { DataNode, IconType, Key } from "./treeNode";
+import classNames from "classnames";
+import { ConfigContext } from "../config-provider";
+import useStyle from "./style";
+import { resolveTreeDataToList } from "./util";
 
 export type TreeDataType = DataNode;
 
@@ -42,8 +46,8 @@ export interface TreeProps {
   prefixCls: string;
   className?: string;
   style?: React.CSSProperties;
-  children?: React.ReactNode;
-  treeData: TreeDataType;
+  children?: React.ReactNode; // remove ？Tree组件不包裹内容
+  treeData: TreeDataType[];
   selectable?: boolean;
   checkable?: boolean | React.ReactNode;
   disabled?: boolean;
@@ -110,7 +114,6 @@ export interface TreeProps {
   ) => void;
   loadData?: (treeNode: EventDataNode<TreeDataType>) => Promise<any>;
   loadedKeys?: Key[]; // work with loadData
-
   // draggable?: DraggableFn | boolean | DraggableConfig;
   // allowDrop?: AllowDrop<TreeDataType>;
   // dropIndicatorRender?: (props: {
@@ -127,3 +130,50 @@ export interface TreeProps {
   //   node: EventDataNode<TreeDataType>;
   // }) => void;
 }
+
+const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
+  const {
+    prefixCls: customizePrefixCls,
+    className,
+    style,
+    treeData = [],
+  } = props;
+
+  const { getPrefixCls } = useContext(ConfigContext);
+  const prefixCls = getPrefixCls("tree", customizePrefixCls);
+
+  const [WrapCSSVar, hashId, cssVarCls] = useStyle(prefixCls);
+
+  // >>>>> treeData
+  const { treeList, treeMap } = resolveTreeDataToList(treeData);
+
+  // >>>>> treeNodes
+  const treeNodes = treeList.map((node, idx) => {
+    let title;
+    if (typeof node.title === "function") {
+      title = node.title(node);
+    } else {
+      title = node.title;
+    }
+
+    return <TreeNode key={node.key ?? idx} title={title} />;
+  });
+
+  // >>>>> className
+  const treeClassName = classNames(prefixCls, className, hashId, cssVarCls);
+
+  // >>>>> render
+  const tree = (
+    <div ref={ref} className={treeClassName} style={style}>
+      {treeNodes}
+    </div>
+  );
+
+  if (typeof WrapCSSVar === "function") {
+    return WrapCSSVar(tree);
+  }
+
+  return tree;
+});
+
+export default Tree;

@@ -7,7 +7,8 @@ import React from "react";
 // import SpinPage from "./spin";
 // import QRCodePage from "./qrcode";
 // import InputPage from "./input";
-import ModalPage from "./modal";
+// import ModalPage from "./modal";
+import TreePage from "./tree";
 
 const App = () => {
   // 引入待调试的组件页
@@ -20,7 +21,8 @@ const App = () => {
   // devPage = <SpinPage />;
   // devPage = <QRCodePage />;
   // devPage = <InputPage />;
-  devPage = <ModalPage />;
+  // devPage = <ModalPage />;
+  devPage = <TreePage />;
 
   return devPage;
 };
