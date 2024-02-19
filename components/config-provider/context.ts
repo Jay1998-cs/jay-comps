@@ -50,7 +50,7 @@ const defaultGetPrefixCls = (suffixCls?: string, customPrefixCls?: string) => {
   if (customPrefixCls) {
     return customPrefixCls;
   }
-  return suffixCls ? `jay-${suffixCls}` : "jay";
+  return suffixCls ? `jay-${suffixCls}` : "jay-comp";
 };
 
 //////////////////////////////////////////////////////////////////////////////
