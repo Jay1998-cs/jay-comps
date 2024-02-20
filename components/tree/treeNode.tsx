@@ -1,8 +1,36 @@
 import classNames from "classnames";
-import React, { LegacyRef, forwardRef, useContext } from "react";
+import React, {
+  MouseEvent,
+  MouseEventHandler,
+  forwardRef,
+  useContext,
+  useState,
+} from "react";
+import { CaretDownOutlined } from "@ant-design/icons";
+
 import { ConfigContext } from "../config-provider";
 
 export type Key = string | number;
+
+export interface DataNode {
+  key: Key;
+  title?: TreeNodeTitle;
+  className?: string;
+  children?: DataNode[];
+  checkable?: boolean;
+  disabled?: boolean;
+  disableCheckbox?: boolean;
+  icon?: IconType;
+  isLeaf?: boolean;
+  selectable?: boolean;
+  switcherIcon?: IconType;
+  style?: React.CSSProperties;
+  pos?: string;
+
+  parentKeys?: Key[];
+  parentTitles?: TreeNodeTitle[];
+  childKeys?: Key[];
+}
 
 export interface TreeNodeAttrubute {
   prefixCls?: string;
@@ -37,15 +65,15 @@ export interface TreeNodeAttrubute {
 //   event: React.MouseEvent<HTMLElement>;
 // }
 
-export interface TreeNodeProps {
-  key: Key;
+export type TreeNodeProps = {
+  key: Key; // 必需
   prefixCls?: string;
   className?: string;
   title?: React.ReactNode;
   expanded?: boolean;
   selected?: boolean;
   checked?: boolean;
-  halfChecked?: boolean;
+  indeterminate?: boolean;
   isLeaf?: boolean;
   selectable?: boolean;
   checkable?: boolean;
@@ -56,7 +84,18 @@ export interface TreeNodeProps {
   icon?: ((treeNode: TreeNodeAttrubute) => React.ReactNode) | React.ReactNode;
   style?: React.CSSProperties;
   children?: React.ReactNode; // remove ？树节点不包裹内容
-}
+
+  indentUnitSize?: number;
+  data?: DataNode;
+
+  onChecked?: (
+    checkedKey: Key,
+    isChecked: boolean,
+    data: DataNode,
+    e?: MouseEvent
+  ) => void;
+  onExpaned?: MouseEventHandler;
+} & DataNode;
 
 export type TreeNodeType = TreeNodeProps;
 
@@ -67,26 +106,6 @@ export type IconType =
 export type TreeNodeTitle =
   | React.ReactNode
   | ((data: DataNode) => React.ReactNode);
-
-export interface DataNode {
-  key: Key;
-  title?: TreeNodeTitle;
-  className?: string;
-  children?: DataNode[];
-  checkable?: boolean;
-  disabled?: boolean;
-  disableCheckbox?: boolean;
-  icon?: IconType;
-  isLeaf?: boolean;
-  selectable?: boolean;
-  switcherIcon?: IconType;
-  style?: React.CSSProperties;
-  pos?: string;
-
-  parentKeys?: Key[];
-  parentTitles?: TreeNodeTitle[];
-  childKeys: Key[];
-}
 
 export interface TreeNodeBaseEvent {
   node: TreeNodeProps;
@@ -121,32 +140,93 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
     className,
     style,
     children,
-    title,
-    expanded,
-    selected,
-    selectable,
-    checked,
-    checkable,
-    halfChecked,
-    disabled,
-    disableCheckbox,
-    icon,
+    title: customizeTitle,
+    data,
+    indentUnitSize = 24,
+    expanded = true, // xxxxxxxxx 待修改
+    checked = false,
+    indeterminate = false,
+    onChecked,
+    // checkable = true,
+    // disabled = false,
+    // disableCheckbox = false,
+    // icon,
   } = props;
 
   const { getPrefixCls } = useContext(ConfigContext);
   const prefixCls = getPrefixCls("tree-treenode", customizePrefixCls);
 
+  // >>>>> state
+  const [isExpanded, setIsExpanded] = useState(!!expanded);
+  const [isChecked, setIsChecked] = useState(!!checked);
+  const [isCheckedSome, setIsCheckedSome] = useState(false);
+
+  // >>>>> process treenode data
+  if (!data) {
+    return (
+      <div ref={ref} style={style} className={`${prefixCls} ${className}`} />
+    );
+  }
+
+  let title = customizeTitle;
+  if (typeof data.title === "function") {
+    title = data.title(data);
+  } else if (data.title) {
+    title = data.title;
+  }
+
+  const isNotLeaf = !!data.children;
+  const indentSize = indentUnitSize * (data.parentKeys?.length || 0);
+
   // >>>>> className
   const treeNodeClassName = classNames(className, prefixCls);
 
-  // >>>>> indent
-  const indent = <span className={`${prefixCls}-indent`}>口</span>;
+  // >>>>> indentNode
+  const indentStyle: React.CSSProperties = { paddingLeft: `${indentSize}px` };
+  const indentNode = (
+    <span className={`${prefixCls}-indent`} style={indentStyle} />
+  );
 
   // >>>>> switcher
-  const switcher = <span className={`${prefixCls}-switcher`}>{">"}</span>;
+  const handleSwitcherClick: MouseEventHandler = () => {
+    setIsExpanded((preExpanded) => !preExpanded);
+    // 调用tree传入的回调函数onExpand
+  };
+
+  const switcher = isNotLeaf ? (
+    <span
+      className={classNames(`${prefixCls}-switcher`, {
+        [`${prefixCls}-switcher-open`]: expanded === true,
+        [`${prefixCls}-switcher-close`]: expanded === false,
+      })}
+      onClick={handleSwitcherClick}
+    >
+      <CaretDownOutlined className={`${prefixCls}-switcher-icon`} />
+    </span>
+  ) : null;
 
   // >>>>> checkbox
-  const checkbox = <span className={`${prefixCls}-checkbox`}>{"✔"}</span>;
+  const handleCheckboxClick: MouseEventHandler = (e) => {
+    setIsChecked((preChecked) => !preChecked);
+
+    if (typeof onChecked === "function") {
+      onChecked(data.key, !isChecked, data, e);
+    }
+  };
+
+  const checkbox = (
+    <span
+      className={classNames(`${prefixCls}-checkbox`, {
+        [`${prefixCls}-checkbox-checked`]: isChecked,
+        [`${prefixCls}-checkbox-indeterminate`]: isCheckedSome,
+      })}
+    >
+      <span
+        className={`${prefixCls}-checkbox-inner`}
+        onClick={handleCheckboxClick}
+      ></span>
+    </span>
+  );
 
   // >>>>> render
   const treeNodeContent = (
@@ -158,7 +238,7 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
 
   return (
     <div ref={ref} className={treeNodeClassName} style={style}>
-      {indent}
+      {indentNode}
       {switcher}
       {checkbox}
       {treeNodeContent}

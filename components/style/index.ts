@@ -1,7 +1,7 @@
 export const resetComponentStyle = (
   token: any,
   needInheritFontFamily = false
-) => ({
+): React.CSSProperties => ({
   boxSizing: "border-box",
   margin: 0,
   padding: 0,

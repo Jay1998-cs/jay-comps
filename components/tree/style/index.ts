@@ -1,5 +1,5 @@
 import { TokenType, genComponentStyleHook } from "../../theme";
-import { genTreeNodeStyle } from "./genStyleByToken";
+import { genTreeNodeStyle, genTreeStyle } from "./genStyleByToken";
 
 export interface TreeToken extends TokenType {
   componentCls: string;
@@ -16,7 +16,7 @@ const useStyle = genComponentStyleHook("tree", (token) => {
     nodeHeight: "24px",
   });
 
-  return [genTreeNodeStyle(treeToken)];
+  return [genTreeStyle(treeToken), genTreeNodeStyle(treeToken)];
 });
 
 export default useStyle;

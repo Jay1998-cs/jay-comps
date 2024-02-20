@@ -221,6 +221,7 @@ class Tree extends PureComponent {
   // 手动改变Checkbox状态的事件处理
   handleItemChecked = (record, isChecked, e) => {
     const { checkedArrIds, obj } = this.state;
+
     const { keysMap, onChecked } = this.props;
     const { id: kId, children: childrenKey } = keysMap;
     const { parentIds } = record;
@@ -243,6 +244,7 @@ class Tree extends PureComponent {
 
       traverseRemove(record);
     }
+
     if (typeof onChecked === "function") {
       onChecked(record, isChecked, checkedArrIds, e);
     }
@@ -251,7 +253,7 @@ class Tree extends PureComponent {
       checkedArrIds: checkedArrIds,
     });
 
-    // 递归移除当前节点及其子孙节点
+    // 递归处理子孙节点
     function traverseRemove(item) {
       const children = item[childrenKey];
       if (children && children.length) {
@@ -384,6 +386,8 @@ class Tree extends PureComponent {
   }
 }
 
+///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 // =========================== utils =====================
 function getNewState(props) {
   const { data = [], keysMap = {}, expandedIds = [], checkedIds = [] } = props;
