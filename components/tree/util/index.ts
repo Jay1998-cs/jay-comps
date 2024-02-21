@@ -1,10 +1,15 @@
 import { TreeDataType, VIRTUAL_HEIGHT } from "../tree";
-import { DataNode, Key, TreeNodeTitle } from "../treeNode";
+import { CheckedStatus, DataNode, Key, TreeNodeTitle } from "../treeNode";
 
-// 平铺treeData并收集嵌套信息
+export type TreeMap = Record<Key, DataNode>;
+
+/**
+ * @description 平铺treeData并收集信息
+ * @returns treeList, treeMap, treetotalHeight, translateY
+ */
 export function resolveTreeDataToList(treeData: TreeDataType[]) {
   const treeList: DataNode[] = [];
-  const treeMap: Record<Key, DataNode> = {};
+  const treeMap: TreeMap = {};
 
   function traverseData(
     treeData: TreeDataType[],
@@ -114,3 +119,20 @@ export function getVisibleTreeRange(
     treeTotalHeight: totalHeight,
   };
 }
+
+// export const traverseChildCheckedState = (
+//   traverseKeys: Set<Key>
+// ): CheckedStatus => {
+//   let checkedState: CheckedStatus = "none";
+//   let checkedCount: number = 0;
+//   let isCheckedAll: boolean = false;
+
+//   traverseKeys.forEach((key) => {
+//     if (!checkedKeys.has(key)) {
+//       isCheckedAll = false;
+
+//     }
+//   });
+
+//   return checkedState;
+// };

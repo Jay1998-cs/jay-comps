@@ -12,11 +12,14 @@ import { ConfigContext } from "../config-provider";
 
 export type Key = string | number;
 
+export type CheckedStatus = "none" | "checked" | "indeterminate";
+
 export interface DataNode {
   key: Key;
   title?: TreeNodeTitle;
   className?: string;
   children?: DataNode[];
+  isChecked?: boolean;
   checkable?: boolean;
   disabled?: boolean;
   disableCheckbox?: boolean;
@@ -38,8 +41,7 @@ export interface TreeNodeAttrubute {
   title: React.ReactNode;
   expanded: boolean;
   selected: boolean;
-  checked: boolean;
-  halfChecked: boolean;
+  checked: CheckedStatus;
   isLeaf: boolean;
   selectable: boolean;
   disabled: boolean;
@@ -72,7 +74,7 @@ export type TreeNodeProps = {
   title?: React.ReactNode;
   expanded?: boolean;
   selected?: boolean;
-  checked?: boolean;
+  checked?: CheckedStatus;
   indeterminate?: boolean;
   isLeaf?: boolean;
   selectable?: boolean;
@@ -90,7 +92,7 @@ export type TreeNodeProps = {
 
   onChecked?: (
     checkedKey: Key,
-    isChecked: boolean,
+    checked: CheckedStatus,
     data: DataNode,
     e?: MouseEvent
   ) => void;
@@ -144,7 +146,7 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
     data,
     indentUnitSize = 24,
     expanded = true, // xxxxxxxxx 待修改
-    checked = false,
+    checked = "none",
     indeterminate = false,
     onChecked,
     // checkable = true,
@@ -158,8 +160,8 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
 
   // >>>>> state
   const [isExpanded, setIsExpanded] = useState(!!expanded);
-  const [isChecked, setIsChecked] = useState(!!checked);
-  const [isCheckedSome, setIsCheckedSome] = useState(false);
+  const [checkedState, setCheckedState] = useState(checked);
+  // const [isCheckedSome, setIsCheckedSome] = useState(false);
 
   // >>>>> process treenode data
   if (!data) {
@@ -207,18 +209,24 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
 
   // >>>>> checkbox
   const handleCheckboxClick: MouseEventHandler = (e) => {
-    setIsChecked((preChecked) => !preChecked);
+    setCheckedState((preChecked) => {
+      if (preChecked === "checked") {
+        return "none";
+      }
+      return "checked";
+    });
 
     if (typeof onChecked === "function") {
-      onChecked(data.key, !isChecked, data, e);
+      onChecked(data.key, checkedState, data, e);
     }
   };
 
   const checkbox = (
     <span
       className={classNames(`${prefixCls}-checkbox`, {
-        [`${prefixCls}-checkbox-checked`]: isChecked,
-        [`${prefixCls}-checkbox-indeterminate`]: isCheckedSome,
+        [`${prefixCls}-checkbox-checked`]: checkedState === "checked",
+        [`${prefixCls}-checkbox-indeterminate`]:
+          checkedState === "indeterminate",
       })}
     >
       <span

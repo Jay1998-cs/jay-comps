@@ -16,11 +16,6 @@ export const genTreeStyle = (
     [`${cls} [class^=${cls.slice(1)}]`]: {
       boxSizing: "border-box",
     },
-
-    // tree wrapper
-    [`${cls} ${cls}-wrapper`]: {
-      overflowY: "scroll",
-    },
   };
 };
 

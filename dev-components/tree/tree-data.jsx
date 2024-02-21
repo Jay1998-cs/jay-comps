@@ -11,13 +11,14 @@ export const treeData1 = [
         disabled: true,
         children: [
           {
-            title: "leaf",
+            title: "0-0-0-0",
             key: "0-0-0-0",
             disableCheckbox: true,
           },
           {
-            title: "leaf",
+            title: "leaf 0-0-0-1",
             key: "0-0-0-1",
+            isChecked: true,
           },
         ],
       },
@@ -26,8 +27,24 @@ export const treeData1 = [
         key: "0-0-1",
         children: [
           {
-            title: <span style={{ color: "#1677ff" }}>sss</span>,
+            title: <span style={{ color: "#1677ff" }}>leaf 0-0-1</span>,
             key: "0-0-1-0",
+          },
+          {
+            title: "leaf 0-0-1-1",
+            key: "0-0-1-1",
+            children: [
+              {
+                title: "0-0-1-1-0",
+                key: "0-0-1-1-0",
+                isChecked: true,
+              },
+              {
+                title: "leaf 0-0-1-1-1",
+                key: "0-0-1-1-1",
+                isChecked: true,
+              },
+            ],
           },
         ],
       },
@@ -57,7 +74,7 @@ export function createTreeData(path = "0", level = 3, count = 2) {
     const treeNode = createTreeNode(key);
 
     if (level === 1 && key === "0-0-0-0") {
-      treeNode.children = createTreeData(key, level - 1, 3);
+      treeNode.children = createTreeData(key, level - 1, 10);
     } else if (level > 0) {
       treeNode.children = createTreeData(key, level - 1);
     }
