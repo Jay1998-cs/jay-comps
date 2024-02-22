@@ -8,14 +8,28 @@ import React, {
   useState,
 } from "react";
 
-import TreeNode, { CheckedStatus, DataNode, IconType, Key } from "./treeNode";
+import TreeNode, {
+  CheckedStatus,
+  DataNode,
+  IconType,
+  TreeNodeKey,
+  TreeNodeKeys,
+} from "./treeNode";
 import classNames from "classnames";
 import { ConfigContext } from "../config-provider";
 import useStyle from "./style";
 import { getVisibleTreeRange, resolveTreeDataToList } from "./util";
 import { debounce } from "throttle-debounce";
-
-export type TreeDataType = DataNode;
+import {
+  getCheckedKeys,
+  getDescendantsCheckedKeys,
+  setChildsUnChecked,
+  getAncestorsCheckedKeys,
+} from "./util/processCheckedStatus";
+import {
+  getAncestorsExpandedKeys,
+  removeDescendantsExpanded,
+} from "./util/processExpandedStatus";
 
 export interface FieldNames {
   title?: string;
@@ -26,8 +40,10 @@ export interface FieldNames {
 
 export type ExpandAction = false | "click" | "doubleClick";
 
+type TreeDataType = DataNode;
+
 export type EventDataNode<TreeDataType> = {
-  key: Key;
+  key: TreeNodeKey;
   expanded: boolean;
   selected: boolean;
   checked: boolean;
@@ -48,7 +64,7 @@ export interface CheckInfo<TreeDataType extends DataNode> {
   nativeEvent: MouseEvent;
   checkedNodes: TreeDataType[];
   checkedNodesPositions?: { node: TreeDataType; pos: string }[];
-  halfCheckedKeys?: Key[];
+  halfCheckedKeys?: TreeNodeKeys;
 }
 
 export interface TreeProps {
@@ -70,7 +86,7 @@ export interface TreeProps {
   tabIndex?: number;
   multiple?: boolean; // 是否支持多选
   blockNode?: boolean; // ?
-  activeKey?: Key | null; // ?
+  activeKey?: TreeNodeKey | null; // ?
   checkStrictly?: boolean; // ?
   fieldNames?: FieldNames; // ?
   indentUnitSize?: number;
@@ -79,9 +95,9 @@ export interface TreeProps {
   autoExpandParent?: boolean;
   defaultExpandAll?: boolean;
   expandAction?: ExpandAction;
-  defaultExpandedKeys?: Key[];
-  defaultCheckedKeys?: Key[];
-  defaultSelectedKeys?: Key[];
+  defaultExpandedKeys?: TreeNodeKeys;
+  defaultCheckedKeys?: TreeNodeKeys;
+  defaultSelectedKeys?: TreeNodeKeys;
   // expandedKeys?: Key[];
   // checkedKeys?: Key[] | { checked: Key[]; halfChecked: Key[] };
   // selectedKeys?: Key[];
@@ -95,7 +111,7 @@ export interface TreeProps {
   onDoubleClick?: React.MouseEventHandler<HTMLSpanElement>;
   onScroll?: React.UIEventHandler<HTMLElement>;
   onExpand?: (
-    expandedKeys: Key[],
+    expandedKeys: TreeNodeKeys,
     info: {
       node: EventDataNode<TreeDataType>;
       expanded: boolean;
@@ -103,11 +119,13 @@ export interface TreeProps {
     }
   ) => void;
   onCheck?: (
-    checked: { checked: Key[]; halfChecked: Key[] } | Key[],
+    checked:
+      | { checked: TreeNodeKeys; halfChecked: TreeNodeKeys }
+      | TreeNodeKeys,
     info: CheckInfo<TreeDataType>
   ) => void;
   onSelect?: (
-    selectedKeys: Key[],
+    selectedKeys: TreeNodeKeys,
     info: {
       event: "select";
       selected: boolean;
@@ -117,14 +135,14 @@ export interface TreeProps {
     }
   ) => void;
   onLoad?: (
-    loadedKeys: Key[],
+    loadedKeys: TreeNodeKeys,
     info: {
       event: "load";
       node: EventDataNode<TreeDataType>;
     }
   ) => void;
   loadData?: (treeNode: EventDataNode<TreeDataType>) => Promise<any>;
-  loadedKeys?: Key[]; // work with loadData
+  loadedKeys?: TreeNodeKeys; // work with loadData
   // draggable?: DraggableFn | boolean | DraggableConfig;
   // allowDrop?: AllowDrop<TreeDataType>;
   // dropIndicatorRender?: (props: {
@@ -142,65 +160,13 @@ export interface TreeProps {
   // }) => void;
 }
 
+export type TreeData = TreeDataType[];
+export type TreeMap = Record<TreeNodeKey, DataNode>;
+export type TreeList = DataNode[];
+export type SetTreeNodeKeys = Set<TreeNodeKey>;
+
 export const VIRTUAL_HEIGHT = 200; // 可见区域的上下缓冲区高度
 export const TREE_NODE_HEIGHT = 28; // 24px(height) + 4px(padding-bottom)
-
-// ==========================================================================
-type TreMap = Record<Key, DataNode>;
-
-// 若后代全勾选，则parent节点置为全选状态，添加到选中集合
-function updateParentsCheckedState(
-  key: Key,
-  checkedKeys: Set<Key>,
-  treeMap: TreMap
-) {
-  const { parentKeys } = treeMap[key] || {};
-  if (parentKeys !== undefined) {
-    // 处理每一个父节点
-    for (let i = 0, pLen = parentKeys.length; i < pLen; ++i) {
-      const parentKey = parentKeys[i];
-      const { childKeys } = treeMap[parentKey];
-      let isCheckedAll = true;
-      // 判断后代是否全部选中
-      if (childKeys && childKeys.length) {
-        for (let j = 0, cLen = childKeys.length; j < cLen; ++j) {
-          if (!checkedKeys.has(childKeys[j])) {
-            isCheckedAll = false;
-            break;
-          }
-        }
-      }
-      // 后代全选，则父节点更新为全选状态
-      if (isCheckedAll) {
-        checkedKeys.add(parentKey);
-      } else {
-        break;
-      }
-    }
-  }
-}
-
-// 将标识为key的节点及其后代添加到选中集合
-function setChildsChecked(key: Key, checkedKeys: Set<Key>, treeMap: TreMap) {
-  const { childKeys } = treeMap[key] || {};
-  if (childKeys && childKeys.length) {
-    childKeys.forEach((childKey) => {
-      if (!checkedKeys.has(childKey)) {
-        checkedKeys.add(childKey);
-      }
-      setChildsChecked(childKey, checkedKeys, treeMap);
-    });
-  }
-}
-
-function getCheckedKeys(checkedKeys: Set<Key>, treeMap: TreMap): Set<Key> {
-  checkedKeys.forEach((key) => {
-    updateParentsCheckedState(key, checkedKeys, treeMap);
-    setChildsChecked(key, checkedKeys, treeMap);
-  });
-
-  return checkedKeys;
-}
 
 // ================================== Tree ==================================
 const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
@@ -209,7 +175,7 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
     className,
     style,
     treeData = [],
-    visibleHeight = 300,
+    visibleHeight = 400,
     indentUnitSize = 24,
     defaultCheckedKeys = [],
     defaultExpandedKeys = [],
@@ -221,51 +187,101 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
   const [WrapCSSVar, hashId, cssVarCls] = useStyle(prefixCls);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  // >>>>> states
   const [scrollTop, setScrollTop] = useState<number>(0);
-
-  // const [expandedKeys, setExpandedKeys] = useState(
-  //   new Set([...defaultExpandedKeys])
-  // );
 
   // >>>>> process treeData
   const { treeList, treeMap } = useMemo(() => {
-    return resolveTreeDataToList(treeData);
+    return resolveTreeDataToList(treeData); // Memo缓存，减少重复计算
   }, [treeData]);
 
+  // checked and expanded Keys
   treeList.forEach((treenode) => {
     if (treenode.isChecked) {
       defaultCheckedKeys.push(treenode.key);
     }
+    if (treenode.isExpanded) {
+      defaultExpandedKeys.push(treenode.key);
+    }
   });
-  const initialCheckedKeys = useMemo(
-    () => getCheckedKeys(new Set([...defaultCheckedKeys]), treeMap),
-    [defaultCheckedKeys, treeMap]
+
+  const initialCheckedKeys = getCheckedKeys(
+    new Set(defaultCheckedKeys),
+    treeMap
   );
   const [checkedKeys, setCheckedKeys] = useState(initialCheckedKeys);
-  console.log("checkedKeys: ", checkedKeys);
 
-  const expandedKeys = new Set([...defaultExpandedKeys]);
+  const initialExpandedKeys = getAncestorsExpandedKeys(
+    new Set(defaultExpandedKeys),
+    treeMap
+  );
+  const [expandedKeys, setExpandedKeys] = useState(initialExpandedKeys);
+
+  // : 死循环：useState(initialExpandedKeys); 只会初始调用，引用没变但内容变了
+  // if (initialExpandedKeys !== expandedKeys) {
+  //   setExpandedKeys(initialExpandedKeys);
+  // }
 
   // >>>>> event handler
-  const handleCheckedStatus = (
-    isChecked: boolean,
-    checkedState: CheckedStatus,
-    dataNode: DataNode
-  ) => {
-    if (checkedState === "none") {
-    } else {
-    }
-  };
-
-  // scroll
+  // scrolling
   const handleTreeScroll = () => {
     setScrollTop(Number(scrollRef?.current?.scrollTop) || 0);
   };
 
-  // >>>> checked
-  const traverseCheckedState = (traverseKeys: Key[]): CheckedStatus => {
+  // click checkbox
+  const handleCheckedStatus = (isChecked: boolean, node: DataNode) => {
+    const { key: targetKey } = node;
+    const newCheckedKeys = new Set(checkedKeys); // 创建新副本，触发state更新，使组件响应更新
+
+    if (isChecked && !newCheckedKeys.has(targetKey)) {
+      // 勾选当前节点
+      newCheckedKeys.add(targetKey);
+      // 勾选全部后代节点
+      getDescendantsCheckedKeys(targetKey, newCheckedKeys, treeMap);
+      // 更新父节点为全选或半选
+      getAncestorsCheckedKeys(targetKey, newCheckedKeys, treeMap);
+    } else if (!isChecked) {
+      // 取消勾选当前节点
+      newCheckedKeys.delete(targetKey);
+      // 更新父节点为半选或未选
+      const { parentKeys } = node;
+      parentKeys?.forEach((pKey) => {
+        if (newCheckedKeys.has(pKey)) {
+          newCheckedKeys.delete(pKey);
+        }
+      });
+      // 全部后代节点置为未选
+      setChildsUnChecked(node, newCheckedKeys);
+    }
+
+    setCheckedKeys(newCheckedKeys); // 【更新state，触发组件更新】
+    // x 待改 执行传入tree的回调函数
+  };
+
+  // click expanded switcher
+  const handleExpandedStatus = (isExpanded: boolean, node: DataNode) => {
+    const { childKeys } = node;
+    const nexExpandedKeys = new Set(expandedKeys); // 创建副本，以更新state
+    const has = nexExpandedKeys.has(node.key); // 确保节点未展开
+
+    // 非叶节点expanded状态才有意义
+    if (childKeys && childKeys.length) {
+      if (isExpanded && !has) {
+        // 展开，添加展开key即可(之后getVisibleTreeRange()会收集直接孩子来渲染)
+        nexExpandedKeys.add(node.key);
+        node.isExpanded = true; // 更新节点展开状态
+      } else if (!isExpanded) {
+        // 收起，移除所有后代节点
+        node.isExpanded = false; // 更新节点展开状态
+        removeDescendantsExpanded(node.key, treeMap, nexExpandedKeys);
+      }
+
+      setExpandedKeys(nexExpandedKeys);
+      // x 待改 执行传入tree的回调函数
+    }
+  };
+
+  // >>>> get checked status
+  const traverseCheckedState = (traverseKeys: TreeNodeKey[]): CheckedStatus => {
     let isCheckedAll: boolean = true;
     let isCheckedSome: boolean = false;
     let checkedCount: number = 0;
@@ -299,7 +315,7 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
       const childKeys = treenode.childKeys;
       let checkedState: CheckedStatus = "none";
 
-      if (childKeys && checkedKeys.size) {
+      if (childKeys && childKeys.length) {
         checkedState = traverseCheckedState(childKeys);
       }
 
@@ -313,27 +329,33 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
   // >>>>> treeNodes
   const { renderedTreeNodes, treeTotalHeight, translateY } =
     getVisibleTreeRange(
-      treeList,
+      treeData,
       visibleHeight,
       TREE_NODE_HEIGHT,
       scrollTop,
       expandedKeys
     );
 
+  console.log(expandedKeys);
+  console.log(treeList);
+
   const treeNodesShown = renderedTreeNodes.map((node) => (
     <TreeNode
       key={node.key}
       data={node}
       indentUnitSize={indentUnitSize}
-      onChecked={handleCheckedStatus}
       checked={getCheckedStatus(node)}
+      onChecked={handleCheckedStatus}
+      expanded={expandedKeys.has(node.key)}
+      onExpaned={handleExpandedStatus}
     />
   ));
 
-  console.log(renderedTreeNodes);
+  // console.log("renderedTreeNodes: ", renderedTreeNodes);
 
   // >>>>> render
   const needVirtualScroll = treeTotalHeight > visibleHeight ? true : false;
+  const treeVisibleHeight = needVirtualScroll ? visibleHeight : treeTotalHeight;
 
   const tree = (
     <div
@@ -342,7 +364,7 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
       style={{
         ...style,
         width: "100%",
-        height: visibleHeight,
+        height: treeVisibleHeight,
         position: "relative",
       }}
     >
@@ -353,7 +375,7 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
           onScroll={debounce(17, handleTreeScroll)}
           style={
             needVirtualScroll
-              ? { overflowY: "scroll", height: visibleHeight }
+              ? { overflowY: "scroll", height: treeVisibleHeight }
               : undefined
           }
         >
@@ -367,7 +389,7 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
                 needVirtualScroll
                   ? {
                       transform: `translateY(${translateY}px)`,
-                      height: visibleHeight,
+                      height: treeVisibleHeight,
                     }
                   : undefined
               }
@@ -385,7 +407,6 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
   if (typeof WrapCSSVar === "function") {
     return WrapCSSVar(tree);
   }
-
   return tree;
 });
 

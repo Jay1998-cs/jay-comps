@@ -104,6 +104,14 @@ export const genTreeNodeStyle = (
         transform: "rotate(-90deg)",
       },
 
+    [`${treeNodeSlt} ${treeNodeCls}-switcher${treeNodeCls}-switcher-hidden `]: {
+      background: "transparent",
+      opacity: "0",
+      cursor: "initial",
+      pointerEvents: "none",
+      userSelect: "none",
+    },
+
     // checkbox
     [`${treeNodeSlt} ${treeNodeCls}-checkbox`]: {
       position: "relative",

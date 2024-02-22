@@ -117,7 +117,8 @@ class Tree extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { data, expandedIds, checkedIds } = props;
+    // const { data, expandedIds, checkedIds } = props;
+    const { data } = props;
 
     this.state = {
       ...getNewState(props),
@@ -173,9 +174,11 @@ class Tree extends PureComponent {
 
   // 手动点击展开/收起 icon 的处理
   handleItemExpanded = (record = {}, isExpanded, e) => {
-    const { childrenIds, isLeaf } = record;
+    // const { childrenIds, isLeaf } = record;
+    const { childrenIds } = record;
     const { expandedArrIds = [], obj } = this.state;
-    const { keysMap = {}, hasLeaf } = this.props;
+    // const { keysMap = {}, hasLeaf } = this.props;
+    const { keysMap = {} } = this.props;
     const { id: kId } = keysMap;
     const strId = String(record[kId]);
     const has = expandedArrIds.has(strId);

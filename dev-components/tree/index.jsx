@@ -44,7 +44,7 @@ const TreePage = () => {
   return (
     <div className="dev-tree-page">
       <Card style={{ width: "50%" }}>
-        {/* <Tree treeData={createTreeData("0", 3, 5)} /> */}
+        {/* <Tree treeData={createTreeData("0", 2, 2, 2)} /> */}
         <Tree treeData={treeData1} />
       </Card>
     </div>

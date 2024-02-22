@@ -1,18 +1,18 @@
-import { TreeDataType, VIRTUAL_HEIGHT } from "../tree";
-import { CheckedStatus, DataNode, Key, TreeNodeTitle } from "../treeNode";
+import { SetTreeNodeKeys, TreeData, TreeList, VIRTUAL_HEIGHT } from "../tree";
+import { DataNode, TreeNodeKey, TreeNodeTitle } from "../treeNode";
 
-export type TreeMap = Record<Key, DataNode>;
+export type TreeMap = Record<TreeNodeKey, DataNode>;
 
 /**
  * @description 平铺treeData并收集信息
  * @returns treeList, treeMap, treetotalHeight, translateY
  */
-export function resolveTreeDataToList(treeData: TreeDataType[]) {
-  const treeList: DataNode[] = [];
+export function resolveTreeDataToList(treeData: TreeData) {
+  const treeList: TreeList = [];
   const treeMap: TreeMap = {};
 
   function traverseData(
-    treeData: TreeDataType[],
+    treeData: TreeData,
     pKeys: string[],
     pTitles: TreeNodeTitle[],
     pLevels: number[]
@@ -64,27 +64,29 @@ export function resolveTreeDataToList(treeData: TreeDataType[]) {
  * @returns
  */
 export function getVisibleTreeRange(
-  treeData: DataNode[],
+  treeData: TreeData,
   visibleHeight: number,
   itemHeight: number,
   scrollTop: number = 0,
-  expandedArrIds: Set<Key>
+  expandedArrIds: SetTreeNodeKeys
 ) {
   // 注：这里的可视区域【包含上下缓冲区】
   let totalHeight = 0; // 树形结构内容的总高度；
   let translateY = 0; // 纵向需要被移动的值
-  const renderedTreeNodes: DataNode[] = []; // 可视区待渲染的item
+  const renderedTreeNodes: TreeData = []; // 可视区待渲染的item
 
   // 0: 未进入可视区域阶段(初始默认状态)；1: 处于可视区域阶段；2: 离开可视区域阶段
   let currentStep = 0;
 
   // 递归解析树型结构的数据，计算整体高度并找出需要在可视区域内展示的内容
   workLoop(treeData);
-  function workLoop(list: DataNode[]) {
-    list.forEach((item) => {
+
+  function workLoop(treeNodes: TreeData) {
+    // 注意：初始时遍历最外层节点，这些节点必需渲染
+    treeNodes.forEach((node) => {
       // 遍历每一项(即item表示的是treeNode)
-      const key = item.key; // treeNode的标识key值
-      const children = item.children; // treeNode的后代
+      const key = node.key; // treeNode的标识key值
+      const children = node.children; // treeNode的后代
       totalHeight += itemHeight; // 累加item高度计算当前高度和总高度
 
       if (currentStep === 0) {
@@ -95,19 +97,22 @@ export function getVisibleTreeRange(
         } else {
           // => 2).进入可视区域，已越过界线(隐藏/显示)
           currentStep += 1;
-          renderedTreeNodes.push(item); // 第一个待渲染的item(首个进入可视区的项)
+          renderedTreeNodes.push(node); // 第一个待渲染的item(首个进入可视区的项)
         }
       } else if (currentStep === 1) {
         // ===> 3).处于可视区域阶段【work：收集待渲染的项】
-        renderedTreeNodes.push(item);
+        if (!renderedTreeNodes.find((rNode) => rNode.key === node.key)) {
+          renderedTreeNodes.push(node);
+        }
         // ===> 4).超出可视区域范围，结束当前阶段
         if (totalHeight >= scrollTop + visibleHeight + VIRTUAL_HEIGHT) {
           currentStep += 1;
         }
       }
 
+      // 若当前节点是展开状态且存在后代，则收集待渲染的后代节点
       if (children && children.length && expandedArrIds.has(key)) {
-        workLoop(children); // 继续处理后代
+        workLoop(children);
       }
     });
   }

@@ -1,12 +1,11 @@
-import React from "react";
-
 export const treeData1 = [
   {
-    title: "parent 1",
+    title: "0-0",
     key: "0-0",
+    isExpanded: true,
     children: [
       {
-        title: "parent 1-0",
+        title: "0-0-0",
         key: "0-0-0",
         disabled: true,
         children: [
@@ -16,33 +15,54 @@ export const treeData1 = [
             disableCheckbox: true,
           },
           {
-            title: "leaf 0-0-0-1",
+            title: "0-0-0-1",
             key: "0-0-0-1",
             isChecked: true,
           },
         ],
       },
       {
-        title: "parent 1-1",
+        title: "0-0-1",
         key: "0-0-1",
         children: [
           {
-            title: <span style={{ color: "#1677ff" }}>leaf 0-0-1</span>,
+            title: "0-0-1-0",
             key: "0-0-1-0",
+            children: [
+              {
+                title: "0-0-1-0-0",
+                key: "0-0-1-0-0",
+              },
+              {
+                title: "0-0-1-0-1",
+                key: "0-0-1-0-1",
+                children: [
+                  {
+                    title: "0-0-1-0-1-0",
+                    key: "0-0-1-0-1-0",
+                  },
+                ],
+              },
+            ],
           },
           {
-            title: "leaf 0-0-1-1",
+            title: "0-0-1-1",
             key: "0-0-1-1",
             children: [
               {
                 title: "0-0-1-1-0",
                 key: "0-0-1-1-0",
-                isChecked: true,
+                isChecked: false,
               },
               {
-                title: "leaf 0-0-1-1-1",
+                title: "0-0-1-1-1",
                 key: "0-0-1-1-1",
                 isChecked: true,
+                isExpanded: true,
+                children: [
+                  { title: "0-0-1-1-1-0", key: "0-0-1-1-1-0" },
+                  { title: "0-0-1-1-1-1", key: "0-0-1-1-1-1" },
+                ],
               },
             ],
           },
@@ -66,7 +86,7 @@ function createTreeNode(key, title, label) {
  * @des 生成treeData
  * @params count 表示tree节点的数量
  */
-export function createTreeData(path = "0", level = 3, count = 2) {
+export function createTreeData(path = "0", level = 3, count = 2, MAX = 10) {
   const list = [];
 
   for (let i = 0; i < count; ++i) {
@@ -74,7 +94,7 @@ export function createTreeData(path = "0", level = 3, count = 2) {
     const treeNode = createTreeNode(key);
 
     if (level === 1 && key === "0-0-0-0") {
-      treeNode.children = createTreeData(key, level - 1, 10);
+      treeNode.children = createTreeData(key, level - 1, MAX);
     } else if (level > 0) {
       treeNode.children = createTreeData(key, level - 1);
     }

@@ -10,16 +10,19 @@ import { CaretDownOutlined } from "@ant-design/icons";
 
 import { ConfigContext } from "../config-provider";
 
-export type Key = string | number;
-
+export type TreeNodeKey = string | number;
+export type TreeNodeKeys = TreeNodeKey[];
 export type CheckedStatus = "none" | "checked" | "indeterminate";
 
 export interface DataNode {
-  key: Key;
+  key: TreeNodeKey;
   title?: TreeNodeTitle;
   className?: string;
   children?: DataNode[];
   isChecked?: boolean;
+  isExpanded?: boolean;
+  pos?: string;
+
   checkable?: boolean;
   disabled?: boolean;
   disableCheckbox?: boolean;
@@ -28,11 +31,10 @@ export interface DataNode {
   selectable?: boolean;
   switcherIcon?: IconType;
   style?: React.CSSProperties;
-  pos?: string;
 
-  parentKeys?: Key[];
+  parentKeys?: TreeNodeKeys;
   parentTitles?: TreeNodeTitle[];
-  childKeys?: Key[];
+  childKeys?: TreeNodeKeys;
 }
 
 export interface TreeNodeAttrubute {
@@ -68,7 +70,7 @@ export interface TreeNodeAttrubute {
 // }
 
 export type TreeNodeProps = {
-  key: Key; // 必需
+  key: TreeNodeKey; // 必需
   prefixCls?: string;
   className?: string;
   title?: React.ReactNode;
@@ -90,14 +92,9 @@ export type TreeNodeProps = {
   indentUnitSize?: number;
   data?: DataNode;
 
-  onChecked?: (
-    checkedKey: Key,
-    checked: CheckedStatus,
-    data: DataNode,
-    e?: MouseEvent
-  ) => void;
-  onExpaned?: MouseEventHandler;
-} & DataNode;
+  onChecked?: (isChecked: boolean, dataNode: DataNode, e?: MouseEvent) => void;
+  onExpaned?: (isExpanded: boolean, dataNode: DataNode, e?: MouseEvent) => void;
+};
 
 export type TreeNodeType = TreeNodeProps;
 
@@ -145,23 +142,29 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
     title: customizeTitle,
     data,
     indentUnitSize = 24,
-    expanded = true, // xxxxxxxxx 待修改
+    expanded = false,
     checked = "none",
-    indeterminate = false,
     onChecked,
+    onExpaned,
     // checkable = true,
     // disabled = false,
     // disableCheckbox = false,
-    // icon,
   } = props;
 
   const { getPrefixCls } = useContext(ConfigContext);
   const prefixCls = getPrefixCls("tree-treenode", customizePrefixCls);
 
   // >>>>> state
-  const [isExpanded, setIsExpanded] = useState(!!expanded);
-  const [checkedState, setCheckedState] = useState(checked);
-  // const [isCheckedSome, setIsCheckedSome] = useState(false);
+  const [isExpanded, setIsExpanded] = useState<boolean>(!!expanded);
+  if (expanded !== isExpanded) {
+    setIsExpanded(expanded); // 响应expanded状态更新
+  }
+  // console.log(isExpanded);
+
+  const [checkedState, setCheckedState] = useState<CheckedStatus>(checked);
+  if (checked !== checkedState) {
+    setCheckedState(checked); // 响应checked状态更新
+  }
 
   // >>>>> process treenode data
   if (!data) {
@@ -189,35 +192,43 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
     <span className={`${prefixCls}-indent`} style={indentStyle} />
   );
 
-  // >>>>> switcher
-  const handleSwitcherClick: MouseEventHandler = () => {
-    setIsExpanded((preExpanded) => !preExpanded);
-    // 调用tree传入的回调函数onExpand
+  // >>>>> switcher, toggle expanded status
+  const handleSwitcherClick: MouseEventHandler = (e) => {
+    const nextExpandedState = !isExpanded; // 切换状态：展开 <-> 收起
+    setIsExpanded(nextExpandedState);
+
+    if (typeof onExpaned === "function") {
+      onExpaned(nextExpandedState, data, e);
+    }
   };
 
   const switcher = isNotLeaf ? (
     <span
       className={classNames(`${prefixCls}-switcher`, {
-        [`${prefixCls}-switcher-open`]: expanded === true,
-        [`${prefixCls}-switcher-close`]: expanded === false,
+        [`${prefixCls}-switcher-open`]: isExpanded === true,
+        [`${prefixCls}-switcher-close`]: isExpanded === false,
       })}
       onClick={handleSwitcherClick}
     >
       <CaretDownOutlined className={`${prefixCls}-switcher-icon`} />
     </span>
-  ) : null;
+  ) : (
+    <span className={`${prefixCls}-switcher ${prefixCls}-switcher-hidden`} />
+  );
 
-  // >>>>> checkbox
+  // >>>>> checkbox，toggle checked state
   const handleCheckboxClick: MouseEventHandler = (e) => {
+    const nextIsChecked: boolean = checkedState === "checked" ? false : true;
+
     setCheckedState((preChecked) => {
       if (preChecked === "checked") {
         return "none";
       }
-      return "checked";
+      return "checked"; // "none"或"indeterminate"状态时单击checkbox，表示勾选
     });
 
     if (typeof onChecked === "function") {
-      onChecked(data.key, checkedState, data, e);
+      onChecked(nextIsChecked, data, e);
     }
   };
 
