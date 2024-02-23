@@ -2,7 +2,6 @@ import React, {
   MouseEvent,
   forwardRef,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -11,7 +10,6 @@ import React, {
 import TreeNode, {
   CheckedStatus,
   DataNode,
-  IconType,
   TreeNodeKey,
   TreeNodeKeys,
 } from "./treeNode";
@@ -42,107 +40,121 @@ export type ExpandAction = false | "click" | "doubleClick";
 
 type TreeDataType = DataNode;
 
-export type EventDataNode<TreeDataType> = {
-  key: TreeNodeKey;
-  expanded: boolean;
-  selected: boolean;
-  checked: boolean;
-  loaded: boolean;
-  loading: boolean;
-  halfChecked: boolean;
-  pos: string;
-  active: boolean;
-  // dragOver: boolean;
-  // dragOverGapTop: boolean;
-  // dragOverGapBottom: boolean;
-} & TreeDataType;
+// export type EventDataNode<TreeDataType> = {
+//   key: TreeNodeKey;
+//   expanded: boolean;
+//   selected: boolean;
+//   checked: boolean;
+//   loaded: boolean;
+//   loading: boolean;
+//   halfChecked: boolean;
+//   pos: string;
+//   active: boolean;
+// dragOver: boolean;
+// dragOverGapTop: boolean;
+// dragOverGapBottom: boolean;
+// } & TreeDataType;
 
-export interface CheckInfo<TreeDataType extends DataNode> {
-  event: "check";
-  node: EventDataNode<TreeDataType>;
-  checked: boolean;
-  nativeEvent: MouseEvent;
-  checkedNodes: TreeDataType[];
-  checkedNodesPositions?: { node: TreeDataType; pos: string }[];
-  halfCheckedKeys?: TreeNodeKeys;
-}
+// export interface CheckInfo<TreeDataType extends DataNode> {
+//   event: "check";
+//   node: EventDataNode<TreeDataType>;
+//   checked: boolean;
+//   nativeEvent: MouseEvent;
+//   checkedNodes: TreeDataType[];
+//   checkedNodesPositions?: { node: TreeDataType; pos: string }[];
+//   halfCheckedKeys?: TreeNodeKeys;
+// }
 
 export interface TreeProps {
   prefixCls: string;
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode; // remove ？Tree组件不包裹内容
-  treeData: TreeDataType[];
-  visibleHeight?: number;
-  selectable?: boolean;
-  checkable?: boolean | React.ReactNode;
-  disabled?: boolean;
-  focusable?: boolean;
-  showLine?: boolean;
-  showIcon?: boolean;
-  showLeafIcon?: { showLeafIcon: boolean | IconType };
-  icon?: IconType;
-  switcherIcon?: IconType;
-  tabIndex?: number;
-  multiple?: boolean; // 是否支持多选
-  blockNode?: boolean; // ?
-  activeKey?: TreeNodeKey | null; // ?
-  checkStrictly?: boolean; // ?
-  fieldNames?: FieldNames; // ?
-  indentUnitSize?: number;
+  treeData: TreeDataType[]; // 输入数据
+  visibleHeight?: number; // 可视区高度(树的可见高度)
+  collapseAll?: boolean; // 单击"expandedIcon"收起目录时，是否折叠所有节点
+  defaultExpandAll?: boolean; // 默认展开所有
+  indentUnitSize?: number; // 缩进单位
+  defaultExpandedKeys?: TreeNodeKeys; // 默认展开的节点key
+  defaultCheckedKeys?: TreeNodeKeys; // 默认选中的节点key
+  needCheckbox?: boolean; // 是否需要checkbox
 
-  defaultExpandParent?: boolean;
-  autoExpandParent?: boolean;
-  defaultExpandAll?: boolean;
-  expandAction?: ExpandAction;
-  defaultExpandedKeys?: TreeNodeKeys;
-  defaultCheckedKeys?: TreeNodeKeys;
-  defaultSelectedKeys?: TreeNodeKeys;
+  onExpand?: (
+    node: DataNode,
+    isExpanded: boolean,
+    expandedKeys: SetTreeNodeKeys,
+    nativeEvent: MouseEvent
+  ) => void;
+  onCheck?: (
+    node: DataNode,
+    isChecked: boolean,
+    checkedKeys: SetTreeNodeKeys,
+    nativeEvent: MouseEvent
+  ) => void;
+
+  // selectable?: boolean;
+  // checkable?: boolean | React.ReactNode;
+  // disabled?: boolean;
+  // focusable?: boolean;
+  // showLine?: boolean;
+  // showIcon?: boolean;
+  // showLeafIcon?: { showLeafIcon: boolean | IconType };
+  // icon?: IconType;
+  // switcherIcon?: IconType;
+  // tabIndex?: number;
+  // multiple?: boolean; // 是否支持多选
+  // blockNode?: boolean;
+  // activeKey?: TreeNodeKey | null;
+  // checkStrictly?: boolean;
+  // fieldNames?: FieldNames;
+  // defaultExpandParent?: boolean;
+  // defaultSelectedKeys?: TreeNodeKeys;
+  // expandAction?: ExpandAction;
+  // autoExpandParent?: boolean;
   // expandedKeys?: Key[];
   // checkedKeys?: Key[] | { checked: Key[]; halfChecked: Key[] };
   // selectedKeys?: Key[];
-
-  titleRender?: (node: TreeDataType) => React.ReactNode;
-  onFocus?: React.FocusEventHandler<HTMLDivElement>;
-  onBlur?: React.FocusEventHandler<HTMLDivElement>;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  onContextMenu?: React.MouseEventHandler<HTMLDivElement>;
-  onClick?: React.MouseEventHandler<HTMLSpanElement>;
-  onDoubleClick?: React.MouseEventHandler<HTMLSpanElement>;
-  onScroll?: React.UIEventHandler<HTMLElement>;
-  onExpand?: (
-    expandedKeys: TreeNodeKeys,
-    info: {
-      node: EventDataNode<TreeDataType>;
-      expanded: boolean;
-      nativeEvent: MouseEvent;
-    }
-  ) => void;
-  onCheck?: (
-    checked:
-      | { checked: TreeNodeKeys; halfChecked: TreeNodeKeys }
-      | TreeNodeKeys,
-    info: CheckInfo<TreeDataType>
-  ) => void;
-  onSelect?: (
-    selectedKeys: TreeNodeKeys,
-    info: {
-      event: "select";
-      selected: boolean;
-      node: EventDataNode<TreeDataType>;
-      selectedNodes: TreeDataType[];
-      nativeEvent: MouseEvent;
-    }
-  ) => void;
-  onLoad?: (
-    loadedKeys: TreeNodeKeys,
-    info: {
-      event: "load";
-      node: EventDataNode<TreeDataType>;
-    }
-  ) => void;
-  loadData?: (treeNode: EventDataNode<TreeDataType>) => Promise<any>;
-  loadedKeys?: TreeNodeKeys; // work with loadData
+  // onExpand?: (
+  //   expandedKeys: TreeNodeKeys,
+  //   info: {
+  //     node: EventDataNode<TreeDataType>;
+  //     expanded: boolean;
+  //     nativeEvent: MouseEvent;
+  //   }
+  // ) => void;
+  // onCheck?: (
+  //   checked:
+  //     | { checked: TreeNodeKeys; halfChecked: TreeNodeKeys }
+  //     | TreeNodeKeys,
+  //   info: CheckInfo<TreeDataType>
+  // ) => void;
+  // titleRender?: (node: TreeDataType) => React.ReactNode;
+  // onFocus?: React.FocusEventHandler<HTMLDivElement>;
+  // onBlur?: React.FocusEventHandler<HTMLDivElement>;
+  // onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
+  // onContextMenu?: React.MouseEventHandler<HTMLDivElement>;
+  // onClick?: React.MouseEventHandler<HTMLSpanElement>;
+  // onDoubleClick?: React.MouseEventHandler<HTMLSpanElement>;
+  // onScroll?: React.UIEventHandler<HTMLElement>;
+  // onSelect?: (
+  //   selectedKeys: TreeNodeKeys,
+  //   info: {
+  //     event: "select";
+  //     selected: boolean;
+  //     node: EventDataNode<TreeDataType>;
+  //     selectedNodes: TreeDataType[];
+  //     nativeEvent: MouseEvent;
+  //   }
+  // ) => void;
+  // onLoad?: (
+  //   loadedKeys: TreeNodeKeys,
+  //   info: {
+  //     event: "load";
+  //     node: EventDataNode<TreeDataType>;
+  //   }
+  // ) => void;
+  // loadData?: (treeNode: EventDataNode<TreeDataType>) => Promise<any>;
+  // loadedKeys?: TreeNodeKeys; // work with loadData
   // draggable?: DraggableFn | boolean | DraggableConfig;
   // allowDrop?: AllowDrop<TreeDataType>;
   // dropIndicatorRender?: (props: {
@@ -179,6 +191,10 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
     indentUnitSize = 24,
     defaultCheckedKeys = [],
     defaultExpandedKeys = [],
+    collapseAll = false,
+    needCheckbox = true,
+    onExpand,
+    onCheck,
   } = props;
 
   const { getPrefixCls } = useContext(ConfigContext);
@@ -189,37 +205,31 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState<number>(0);
 
-  // >>>>> process treeData
+  // >>>>> flatten treeData
   const { treeList, treeMap } = useMemo(() => {
     return resolveTreeDataToList(treeData); // Memo缓存，减少重复计算
   }, [treeData]);
 
-  // checked and expanded Keys
-  treeList.forEach((treenode) => {
-    if (treenode.isChecked) {
-      defaultCheckedKeys.push(treenode.key);
-    }
-    if (treenode.isExpanded) {
-      defaultExpandedKeys.push(treenode.key);
-    }
+  // >>>>> states
+  // default checked
+  const [checkedKeys, setCheckedKeys] = useState(() => {
+    treeList.forEach((treenode) => {
+      if (treenode.isChecked) {
+        defaultCheckedKeys.push(treenode.key);
+      }
+    });
+    return getCheckedKeys(new Set(defaultCheckedKeys), treeMap);
   });
 
-  const initialCheckedKeys = getCheckedKeys(
-    new Set(defaultCheckedKeys),
-    treeMap
-  );
-  const [checkedKeys, setCheckedKeys] = useState(initialCheckedKeys);
-
-  const initialExpandedKeys = getAncestorsExpandedKeys(
-    new Set(defaultExpandedKeys),
-    treeMap
-  );
-  const [expandedKeys, setExpandedKeys] = useState(initialExpandedKeys);
-
-  // : 死循环：useState(initialExpandedKeys); 只会初始调用，引用没变但内容变了
-  // if (initialExpandedKeys !== expandedKeys) {
-  //   setExpandedKeys(initialExpandedKeys);
-  // }
+  // default expanded
+  const [expandedKeys, setExpandedKeys] = useState(() => {
+    treeList.forEach((treenode) => {
+      if (treenode.isExpanded) {
+        defaultExpandedKeys.push(treenode.key);
+      }
+    });
+    return getAncestorsExpandedKeys(new Set(defaultExpandedKeys), treeMap);
+  });
 
   // >>>>> event handler
   // scrolling
@@ -228,9 +238,14 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
   };
 
   // click checkbox
-  const handleCheckedStatus = (isChecked: boolean, node: DataNode) => {
+  const handleCheckedStatus = (
+    isChecked: boolean,
+    node: DataNode,
+    e: MouseEvent
+  ) => {
     const { key: targetKey } = node;
     const newCheckedKeys = new Set(checkedKeys); // 创建新副本，触发state更新，使组件响应更新
+    e?.stopPropagation();
 
     if (isChecked && !newCheckedKeys.has(targetKey)) {
       // 勾选当前节点
@@ -254,29 +269,45 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
     }
 
     setCheckedKeys(newCheckedKeys); // 【更新state，触发组件更新】
-    // x 待改 执行传入tree的回调函数
+
+    if (typeof onCheck === "function") {
+      onCheck(node, isChecked, newCheckedKeys, e);
+    }
   };
 
   // click expanded switcher
-  const handleExpandedStatus = (isExpanded: boolean, node: DataNode) => {
+  const handleExpandedStatus = (
+    isExpanded: boolean,
+    node: DataNode,
+    e: MouseEvent
+  ) => {
     const { childKeys } = node;
-    const nexExpandedKeys = new Set(expandedKeys); // 创建副本，以更新state
-    const has = nexExpandedKeys.has(node.key); // 确保节点未展开
+    const newExpandedKeys = new Set(expandedKeys); // 创建副本，以更新state
+    const has = newExpandedKeys.has(node.key); // 确保节点未展开
+    e?.stopPropagation();
 
     // 非叶节点expanded状态才有意义
     if (childKeys && childKeys.length) {
       if (isExpanded && !has) {
         // 展开，添加展开key即可(之后getVisibleTreeRange()会收集直接孩子来渲染)
-        nexExpandedKeys.add(node.key);
-        node.isExpanded = true; // 更新节点展开状态
+        newExpandedKeys.add(node.key);
+        node.isExpanded = true; // 标记节点展开状态
       } else if (!isExpanded) {
         // 收起，移除所有后代节点
-        node.isExpanded = false; // 更新节点展开状态
-        removeDescendantsExpanded(node.key, treeMap, nexExpandedKeys);
+        node.isExpanded = false; // 标记节点收起状态
+        removeDescendantsExpanded(
+          node.key,
+          treeMap,
+          newExpandedKeys,
+          collapseAll
+        );
       }
 
-      setExpandedKeys(nexExpandedKeys);
-      // x 待改 执行传入tree的回调函数
+      setExpandedKeys(newExpandedKeys);
+
+      if (typeof onExpand === "function") {
+        onExpand(node, isExpanded, newExpandedKeys, e);
+      }
     }
   };
 
@@ -336,22 +367,18 @@ const Tree = forwardRef<HTMLDivElement, TreeProps>((props, ref) => {
       expandedKeys
     );
 
-  console.log(expandedKeys);
-  console.log(treeList);
-
   const treeNodesShown = renderedTreeNodes.map((node) => (
     <TreeNode
       key={node.key}
       data={node}
       indentUnitSize={indentUnitSize}
-      checked={getCheckedStatus(node)}
+      needCheckbox={needCheckbox}
+      checked={needCheckbox ? getCheckedStatus(node) : undefined}
       onChecked={handleCheckedStatus}
       expanded={expandedKeys.has(node.key)}
       onExpaned={handleExpandedStatus}
     />
   ));
-
-  // console.log("renderedTreeNodes: ", renderedTreeNodes);
 
   // >>>>> render
   const needVirtualScroll = treeTotalHeight > visibleHeight ? true : false;

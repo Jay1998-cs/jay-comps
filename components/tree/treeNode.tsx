@@ -75,25 +75,25 @@ export type TreeNodeProps = {
   className?: string;
   title?: React.ReactNode;
   expanded?: boolean;
-  selected?: boolean;
   checked?: CheckedStatus;
   indeterminate?: boolean;
   isLeaf?: boolean;
-  selectable?: boolean;
-  checkable?: boolean;
-  disabled?: boolean;
-  disableCheckbox?: boolean;
-  eventKey?: string;
-  loading?: boolean;
-  icon?: ((treeNode: TreeNodeAttrubute) => React.ReactNode) | React.ReactNode;
   style?: React.CSSProperties;
   children?: React.ReactNode; // remove ？树节点不包裹内容
-
   indentUnitSize?: number;
   data?: DataNode;
+  needCheckbox?: boolean;
 
   onChecked?: (isChecked: boolean, dataNode: DataNode, e?: MouseEvent) => void;
   onExpaned?: (isExpanded: boolean, dataNode: DataNode, e?: MouseEvent) => void;
+  // selected?: boolean;
+  // selectable?: boolean;
+  // checkable?: boolean;
+  // disabled?: boolean;
+  // disableCheckbox?: boolean;
+  // eventKey?: string;
+  // loading?: boolean;
+  // icon?: ((treeNode: TreeNodeAttrubute) => React.ReactNode) | React.ReactNode;
 };
 
 export type TreeNodeType = TreeNodeProps;
@@ -143,6 +143,7 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
     data,
     indentUnitSize = 24,
     expanded = false,
+    needCheckbox = true,
     checked = "none",
     onChecked,
     onExpaned,
@@ -159,7 +160,6 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
   if (expanded !== isExpanded) {
     setIsExpanded(expanded); // 响应expanded状态更新
   }
-  // console.log(isExpanded);
 
   const [checkedState, setCheckedState] = useState<CheckedStatus>(checked);
   if (checked !== checkedState) {
@@ -232,7 +232,7 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
     }
   };
 
-  const checkbox = (
+  const checkbox = needCheckbox ? (
     <span
       className={classNames(`${prefixCls}-checkbox`, {
         [`${prefixCls}-checkbox-checked`]: checkedState === "checked",
@@ -245,7 +245,7 @@ const TreeNode = forwardRef<HTMLDivElement, TreeNodeProps>((props, ref) => {
         onClick={handleCheckboxClick}
       ></span>
     </span>
-  );
+  ) : null;
 
   // >>>>> render
   const treeNodeContent = (

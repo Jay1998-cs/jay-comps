@@ -37,15 +37,17 @@ export function getAncestorsExpandedKeys(
 export function removeDescendantsExpanded(
   key: TreeNodeKey,
   treeMap: TreeMap,
-  expandedKeys: SetTreeNodeKeys
+  expandedKeys: SetTreeNodeKeys,
+  collapseAll: boolean
 ) {
   if (expandedKeys.has(key)) {
-    const { childKeys } = treeMap[key];
     expandedKeys.delete(key);
 
-    if (childKeys?.length) {
+    // 折叠所有后代(collapseAll === true)
+    const { childKeys } = treeMap[key];
+    if (collapseAll && childKeys?.length) {
       childKeys.forEach((cKey) => {
-        removeDescendantsExpanded(cKey, treeMap, expandedKeys);
+        removeDescendantsExpanded(cKey, treeMap, expandedKeys, collapseAll);
       });
     }
   }

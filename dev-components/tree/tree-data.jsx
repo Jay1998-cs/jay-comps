@@ -86,7 +86,7 @@ function createTreeNode(key, title, label) {
  * @des 生成treeData
  * @params count 表示tree节点的数量
  */
-export function createTreeData(path = "0", level = 3, count = 2, MAX = 10) {
+export function createTreeData(path = "0", level = 3, count = 4, MAX = 10) {
   const list = [];
 
   for (let i = 0; i < count; ++i) {
@@ -94,9 +94,9 @@ export function createTreeData(path = "0", level = 3, count = 2, MAX = 10) {
     const treeNode = createTreeNode(key);
 
     if (level === 1 && key === "0-0-0-0") {
-      treeNode.children = createTreeData(key, level - 1, MAX);
+      treeNode.children = createTreeData(key, level - 1, MAX, MAX);
     } else if (level > 0) {
-      treeNode.children = createTreeData(key, level - 1);
+      treeNode.children = createTreeData(key, level - 1, count, MAX);
     }
 
     list.push(treeNode);
