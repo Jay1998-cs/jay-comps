@@ -16,9 +16,9 @@ const Card = ({ children, style = {} }) => (
       border: " 1px solid gray",
       padding: 30,
       margin: 0,
-      // display: "flex",
-      // justifyContent: "center",
-      // alignItems: "center",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
       ...style,
     }}
   >
@@ -28,9 +28,9 @@ const Card = ({ children, style = {} }) => (
 
 const Vflex = ({ children, style }) => {
   const _style = {
-    // display: "flex",
-    // flexDirection: "column",
-    // gap: 40,
+    display: "flex",
+    flexDirection: "column",
+    gap: 40,
     width: "100%",
     ...style,
   };
@@ -72,7 +72,7 @@ const TreePage = () => {
         </Card>
         <Card>
           <Tree
-            treeData={createTreeData("0", 3, 3, 1000000)}
+            treeData={createTreeData("0", 3, 3, 950000)}
             needCheckbox={false}
           />
         </Card>
