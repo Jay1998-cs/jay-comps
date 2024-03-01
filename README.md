@@ -1,1 +1,5 @@
-a React componnet library named jay-comps.
+##### a React learning componnet library named jay-comps.
+
+- Based on antd V5
+
+- Thank you, antd !
