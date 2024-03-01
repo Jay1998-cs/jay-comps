@@ -30,7 +30,7 @@ const getStyleLoader = (pre) => {
 
 // webpack配置
 module.exports = {
-  entry: isProduction ? "index.js" : "./dev-components/index.js",
+  entry: isProduction ? "./index.js" : "./dev-components/index.js",
 
   output: {
     path: isProduction ? path.resolve(__dirname, "./dist") : undefined, // 项目打包输出路径
