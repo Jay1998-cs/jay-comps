@@ -19,6 +19,7 @@
   "author": "jaylee",
   "license": "ISC",
   "devDependencies": {
+    "@babel/plugin-transform-typescript": "^7.23.6",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.11",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.2.0",

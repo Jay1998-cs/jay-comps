@@ -127,6 +127,7 @@ module.exports = {
             from: path.resolve(__dirname, "./public"),
             to: path.resolve(__dirname, "./dist"),
             globOptions: {
+              dot: true,
               ignore: ["**/index.html"], // 忽略index.html
             },
           },
