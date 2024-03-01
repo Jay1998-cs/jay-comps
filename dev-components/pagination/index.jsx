@@ -39,7 +39,7 @@ const PaginationPage = () => {
   const pRef = useRef(null);
 
   const handleChange = (e) => {
-    pRef.current.setPageNumberActive(parseInt(e.target.value));
+    pRef?.current?.setPageNumberActive(parseInt(e.target.value));
   };
 
   return (
