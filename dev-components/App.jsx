@@ -63,7 +63,7 @@ const Line = () => {
   );
 };
 
-const App = () => {
+const DevApp = () => {
   const [page, setPage] = React.useState(compsMap.button.page);
 
   const handlePageClick = (page) => {
@@ -114,4 +114,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default DevApp;

@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App";
+import DevApp from "./App";
 
 const rootElem = document.getElementById("root");
 
@@ -10,4 +10,4 @@ if (!rootElem) {
 }
 
 const root = createRoot(rootElem);
-root.render(<App />);
+root.render(<DevApp />);

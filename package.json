@@ -1,6 +1,6 @@
 {
   "name": "jay-comps",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "react component library",
   "main": "index.js",
   "directories": {
@@ -9,7 +9,8 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "cross-env NODE_ENV=development webpack serve --config webpack.config.js",
-    "test": "jest --config .jest.config.js --no-cache"
+    "test": "jest --config .jest.config.js --no-cache",
+    "build": "cross-env NODE_ENV=production webpack --config webpack.config.js"
   },
   "keywords": [
     "react",
