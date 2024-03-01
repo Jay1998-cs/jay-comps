@@ -20,3 +20,5 @@ export { default as Input } from "./input";
 export { default as Modal } from "./modal";
 
 export { default as Tree } from "./tree";
+
+export { default as Pagination } from "./pagination";

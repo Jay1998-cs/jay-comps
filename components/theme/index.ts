@@ -20,3 +20,5 @@ export type { TokenType, SeedToken };
 
 export { default as genComponentStyleHook } from "./util/genComponentStyleHook";
 export { default as useToken } from "./useToken";
+
+export type CSSConfigObj = Record<string, React.CSSProperties>;

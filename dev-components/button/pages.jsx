@@ -38,12 +38,11 @@ const ButtonPages = (props) => {
   pageHead = (
     <div>
       <h1>Button</h1>
-      <p>@jay-comps</p>
       <ul
         style={{ color: "blue", cursor: "pointer", width: "fit-content" }}
         onClick={selectPage}
       >
-        单击切换页面:
+        <p>切换button页:</p>
         <li data-id="defined">默认(已定义 | 内置)按钮</li>
         <li data-id="custom">客制按钮: 自定义主题</li>
       </ul>
