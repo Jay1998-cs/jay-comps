@@ -28,13 +28,9 @@ const getStyleLoader = (pre) => {
   ].filter(Boolean);
 };
 
-const getEntry = () => {
-  return isProduction ? "index.js" : "./dev-components/index.js";
-};
-
 // webpack配置
 module.exports = {
-  entry: getEntry(),
+  entry: isProduction ? "index.js" : "./dev-components/index.js",
 
   output: {
     path: isProduction ? path.resolve(__dirname, "./dist") : undefined, // 项目打包输出路径
