@@ -25,8 +25,11 @@ nohup.out
 _site
 _data
 dist
+dist/
 report.html
+lib
 /lib
+es
 /es
 /locale
 elasticsearch-*
@@ -80,4 +83,4 @@ public
 # **/dev-components
 
 # else
-.eslintignore
+# .eslintignore

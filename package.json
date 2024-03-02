@@ -1,8 +1,17 @@
 {
   "name": "jay-comps",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "react component library",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "unpkg": "dist/antd.min.js",
+  "module": "es/index.js",
+  "typings": "es/index.d.ts",
+  "files": [
+    "dist",
+    "es",
+    "lib",
+    "locale"
+  ],
   "directories": {
     "test": "tests"
   },
@@ -10,7 +19,8 @@
     "start": "npm run dev",
     "dev": "cross-env NODE_ENV=development webpack serve --config webpack.config.js",
     "test": "jest --config .jest.config.js --no-cache",
-    "build": "cross-env NODE_ENV=production webpack --config webpack.config.js"
+    "build": "cross-env NODE_ENV=production webpack --config webpack.config.js",
+    "build-es": "tsc && babel ./components --out-dir es --extensions \".ts,.tsx\" --source-maps inline"
   },
   "keywords": [
     "react",
@@ -19,7 +29,12 @@
   "author": "jaylee",
   "license": "ISC",
   "devDependencies": {
+    "@babel/cli": "^7.23.9",
+    "@babel/core": "^7.24.0",
     "@babel/plugin-transform-typescript": "^7.23.6",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-react": "^7.23.3",
+    "@babel/preset-typescript": "^7.23.3",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.11",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.2.0",
@@ -66,10 +81,6 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
-    "@babel/core": "^7.23.7",
-    "@babel/preset-env": "^7.23.8",
-    "@babel/preset-react": "^7.23.3",
-    "@babel/preset-typescript": "^7.23.3",
     "@emotion/hash": "^0.9.1",
     "@types/throttle-debounce": "^5.0.2",
     "classnames": "^2.5.1",

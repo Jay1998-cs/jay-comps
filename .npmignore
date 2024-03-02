@@ -24,7 +24,10 @@ tests/
 .jest.config.js
 babel.config.js
 index.js
-package.*
+
 tsconfig.json
 webpack.*
 webpack.config.js
+
+dist
+dist/

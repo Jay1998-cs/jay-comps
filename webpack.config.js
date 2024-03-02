@@ -202,7 +202,7 @@ module.exports = {
 
   // 模块加载(import)时的配置选项
   resolve: {
-    extensions: [".ts", ".tsx", ".jsx", ".js", ".json"], // 自动补全文件扩展名
+    extensions: [".ts", ".tsx", ".jsx", ".js", ".json", ".css", ".scss"], // 自动补全文件扩展名
   },
 
   devServer: {

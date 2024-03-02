@@ -6,7 +6,8 @@ import { QRCodeSVG, QRCodeCanvas } from "qrcode.react";
 
 import { ConfigContext } from "../config-provider";
 import useStyle from "./style";
-import { Button, Spin } from "../../components";
+import Button from "../button/index";
+import Spin from "../spin/index";
 
 interface ImageSettings {
   src: string;
