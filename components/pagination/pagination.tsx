@@ -145,8 +145,6 @@ const pagination = forwardRef<any, PaginationProps>((props, ref) => {
       return; // 页码没变化，直接返回
     }
     setActivedNumber(numberActived); // 更新激活的页码
-
-    console.log("单击页码: ", numberActived);
   };
 
   // 单击上一页/下一页按钮事件处理
