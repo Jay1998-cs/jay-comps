@@ -159,7 +159,6 @@ const pagination = forwardRef<any, PaginationProps>((props, ref) => {
     } else if (id === NEXT_BTN) {
       setActivedNumber((preNumber) => preNumber + 1);
     }
-    console.log("单击: ", id);
   };
 
   // 单击页码按钮事件处理
