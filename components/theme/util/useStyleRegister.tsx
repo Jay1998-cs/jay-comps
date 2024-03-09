@@ -57,7 +57,7 @@ const CSSVarRegister: React.FC<any> = (props) => {
   const { path, cssSelectorCls } = info;
   const pathKeys = [...path]; // [tokenKey, component, prefixCls]
   const tokenKey = path[0];
-  const [cachePathKeys, setCachePathKeys] = useState<KeyType[]>([]);
+  const [cachePathKeys, setCachePathKeys] = useState<KeyType[]>([]); // cachePathKeys[0]是tokenKey
 
   /**
    * 监听当前样式标识tokenKey，其变化时，表示组件的样式发生更新
