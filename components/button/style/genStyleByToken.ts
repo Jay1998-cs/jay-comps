@@ -1,5 +1,7 @@
 import type { ButtonToken } from "./";
 
+// type StypeRuleObjType = Record<string, React.CSSProperties>
+
 /////////////////////////// type //////////////////////////////////
 const genDefaultButtonStyle = (token: ButtonToken) => {
   const { componentCls } = token;

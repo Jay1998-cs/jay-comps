@@ -29,9 +29,9 @@ const genStyle = (
   styleFn: () => any
 ) => {
   const pathKeyStr = genPathKey(pathKeys); // ujoqht%Button%jay-btn
-  const styleObj = styleFn();
+  const styleRuleObjArr = styleFn();
   const config = { cssSelectorCls, path: pathKeyStr };
-  const parsedStyleStr = parseStyle(styleObj, config);
+  const parsedStyleStr = parseStyle(styleRuleObjArr, config);
   const styleId = emotionHash(pathKeyStr + parsedStyleStr); // style标签的data-css-hash属性值
 
   let animationConfig = {};

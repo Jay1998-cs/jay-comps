@@ -1,5 +1,5 @@
 import type { ThemeConfig } from "../context";
-import { defaultConfig } from "../../theme/context";
+import { defaultThemeConfig } from "../../theme/context";
 
 /**
  * @description 获取组件的主题对象，它包含组件的样式配置对象属性token
@@ -13,7 +13,7 @@ export default function useTheme(
 ): ThemeConfig | undefined {
   // 获取组件、上层(默认)主题
   const componentThemeConfig = theme || {};
-  const parentThemeConfig = parentTheme || defaultConfig;
+  const parentThemeConfig = parentTheme || defaultThemeConfig;
 
   // return React.useMemo<ThemeConfig | undefined>(() => {
   // 组件未设置主题，则使用父或默认主题

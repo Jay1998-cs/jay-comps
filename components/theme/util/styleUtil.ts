@@ -22,14 +22,14 @@ export function injectHashSelector(className: string, hashId: string) {
 
 // 解析、返回CSS样式字符串
 export function parseStyle(
-  interpolation: any[],
+  styleRuleObjArray: any[],
   config: ParseConfig = {},
   root: boolean = true
 ): string {
   const { cssSelectorCls = "" } = config;
   let styleStr = "";
 
-  interpolation.forEach((originStyle) => {
+  styleRuleObjArray.forEach((originStyle) => {
     if (typeof originStyle === "string") {
       styleStr += `${originStyle}\n`;
     } else if (typeof originStyle === "object") {

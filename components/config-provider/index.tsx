@@ -39,7 +39,7 @@ const ProdviderChildren: React.FC<ProdiverChildrenProps> = (props) => {
     [parentContext, prefixCls]
   );
 
-  // 获取主题对象theme，包含token属性
+  // 获取主题对象theme，包含token属性-->【上下文、客制化的样式变量对象】
   const mergedTheme = useTheme(theme, parentContext.theme);
 
   // 提取、缓存主题配置

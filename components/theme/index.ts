@@ -1,4 +1,4 @@
-import { defaultConfig } from "./context";
+import { defaultThemeConfig } from "./context";
 import CacheEntity from "./Cache";
 import { StyleProvider } from "./StyleContext";
 import StyleContext from "./StyleContext";
@@ -6,8 +6,8 @@ import type { TokenType } from "./context";
 import { SeedToken } from "./seedToken";
 
 const ThemeModules = {
-  defaultConfig,
-  defalultSeed: defaultConfig.token,
+  defaultConfig: defaultThemeConfig,
+  defalultSeed: defaultThemeConfig.token,
 
   CacheEntity,
 
