@@ -1,6 +1,6 @@
 {
   "name": "jay-comps",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "react component library",
   "main": "lib/index.js",
   "unpkg": "dist/antd.min.js",

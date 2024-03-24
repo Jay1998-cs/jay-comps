@@ -9,7 +9,7 @@ export type ContainerType = Element | ShadowRoot;
 
 export const attributeName = "data-css-hash";
 
-// 返回CSS样式选择器，形如:where(selector).className
+// 返回CSS样式选择器，形如:where(hashId).className 或者 .hashId.className
 export function injectHashSelector(className: string, hashId: string) {
   if (!hashId) return className;
 
@@ -17,7 +17,8 @@ export function injectHashSelector(className: string, hashId: string) {
     return className;
   }
 
-  return `:where(.${hashId})${className}`;
+  // return `:where(.${hashId})${className}`;
+  return `.${hashId}${className}`;
 }
 
 // 解析、返回CSS样式字符串
