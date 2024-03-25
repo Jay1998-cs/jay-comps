@@ -34,7 +34,6 @@ const EllipsisTail = ({ children }) => {
 const EllipsisMiddle = (props) => {
   const { suffixCount, children, ...rest } = props;
 
-  const start = children.slice(0, children.length - suffixCount).trim();
   const suffix = children.slice(-suffixCount).trim(); // suffix text
 
   // 【注意】传给ellipsis的是一个对象: { suffix: "...suffix text"}
@@ -50,7 +49,7 @@ const EllipsisMiddle = (props) => {
         Expand or Ellipsis
       </button>
       <Paragraph style={{ maxWidth: "100%" }} ellipsis={suffixConfig} {...rest}>
-        {start}
+        {children}
       </Paragraph>
     </div>
   );
@@ -68,7 +67,7 @@ const EllipsisSuffix = () => {
       <div>
         <button
           onClick={() => {
-            setRows((pre) => (pre + 1) % 10);
+            setRows((pre) => pre + 1);
           }}
         >
           显示行数+1
@@ -76,7 +75,7 @@ const EllipsisSuffix = () => {
         <span> </span>
         <button
           onClick={() => {
-            setRows((pre) => (pre - 1 >= 0 ? pre - 1 : 0));
+            setRows((pre) => (pre - 1 > 1 ? pre - 1 : 2));
           }}
         >
           显示行数-1

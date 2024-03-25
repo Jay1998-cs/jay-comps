@@ -197,7 +197,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
   const [isTextOverflowSupport, setIsTextOverflowSupport] = useState(false); // 是否支持CSS的 text-overflow 属性
 
   const [expanded, setExpanded] = useState(false); // 默认为false即不展开所有文本，单击expandIcon可切换true或false
-  const [isJsEllipsis, setIsJsEllipsis] = useState(false);
+  const [isJsEllipsis, setIsJsEllipsis] = useState(false); // 文本的省略内容改动，需要重新计算(如rows增加或减少时)
   const [isNativeEllipsis, setIsNativeEllipsis] = useState(false);
   const [isNativeVisible, setIsNativeVisible] = useState(false);
   const [enableEllipsis, ellipsisConfig] = useMergedConfig<EllipsisConfig>(
@@ -208,7 +208,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
   );
   const mergedEnableEllipsis = enableEllipsis && !expanded; // 是否需要开启文本省略（默认为true）
 
-  const { rows = 1 } = ellipsisConfig; // 文本默认显示行数为1
+  const { rows = 1 } = ellipsisConfig; // 从props.ellipsis中获取文本要显示的行数(默认为1)
 
   // 是否需要计算省略相关信息（初始情况为false）
   const needMeasureEllipsis = useMemo(
@@ -235,12 +235,10 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
       // 涉及计算操作时不能使用CSS实现文本溢出省略
       return false;
     }
-
     if (rows === 1) {
       // 单行文本时，若浏览器支持CSS的text-overflow属性，则可以使用该CSS方法实现【单行】文本溢出省略
       return isTextOverflowSupport;
     }
-
     // 多行文本时，若浏览器支持CSS的-webkit-line-clamp属性，则可以使用该CSS方法实现【多行】文本溢出省略
     return isLineClampSupport;
   }, [needMeasureEllipsis, rows, isTextOverflowSupport, isLineClampSupport]);
@@ -255,14 +253,15 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
     ellipsisConfig.onExpand?.(e);
   };
 
-  // 处理文本的父容器窗口大小改动resize
-  const [ellipsisWidth, setEllipsisWidth] = React.useState(0);
-  const [ellipsisFontSize, setEllipsisFontSize] = React.useState(0);
+  // 处理文本的父容器窗口尺寸变化即resize事件(首次加载会触发)，记录相关state
+  const [ellipsisWidth, setEllipsisWidth] = React.useState(0); // 文本父容器的布局宽度(不含margin)
+  const [ellipsisFontSize, setEllipsisFontSize] = React.useState(0); // 文本的字体大小(如14px)
 
   const onResize = (
     { offsetWidth }: { offsetWidth: number },
     element: HTMLElement
   ) => {
+    // 监听文本父容器尺寸变化，更新ellipsisWidth和ellipsisFontSize
     setEllipsisWidth(offsetWidth);
     setEllipsisFontSize(
       parseInt(window.getComputedStyle?.(element).fontSize, 10) || 0
@@ -279,7 +278,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
     }
   };
 
-  // 【Native Ellipsis Effect】用于更新 isNativeEllipsis 状态，判断是否为原生隐藏溢出文本的方法
+  // 【Native Ellipsis Effect】用于更新 isNativeEllipsis 状态(通常为false)
   useEffect(() => {
     const textEle = typographyRef.current; // 文本的父容器节点
 
@@ -407,6 +406,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
   ];
 
   // 【渲染函数】调用上方renderXXX相关方法，作为 Ellipsis 组件的children传给它，其内部调用该方法以生成 Ellipsis 组件的渲染内容(后代)
+  // 如果 needEllipsis 为false，则相当于返回传入的 node 节点(只不过重新声明了一个变量renderNode)
   const ellipsisChildren = (node: React.ReactNode, needEllipsis: boolean) => {
     // 待渲染的节点
     let renderNode: React.ReactNode = node;
@@ -418,7 +418,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
       typeof node === "boolean" ||
       typeof node === "symbol";
 
-    // 具备length属性，并且需要省略
+    // 具备length属性，并且需要省略，则用一个span包裹待渲染内容
     if (!noLengthAttr && needEllipsis) {
       renderNode = (
         <span key="show-content" aria-hidden>
