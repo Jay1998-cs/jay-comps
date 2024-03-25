@@ -29,7 +29,7 @@ const Typography = React.forwardRef<HTMLElement, InternalTypographyProps<any>>(
   (props, ref) => {
     const {
       prefixCls: customizePrefixCls,
-      component: Component = "article", // 默认为article组件
+      component: Component = "div", // 默认为div，或article元素
       className,
       rootClassName,
       children,
