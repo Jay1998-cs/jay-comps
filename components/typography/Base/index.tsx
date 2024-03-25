@@ -48,12 +48,12 @@ interface EditiConfig {
 }
 
 export interface EllipsisConfig {
-  rows?: number;
-  expandable?: boolean;
-  suffix?: string;
-  symbol?: React.ReactNode;
-  onExpand?: React.MouseEventHandler<HTMLElement>;
-  onEllipsis?: (ellipsis: boolean) => void;
+  rows?: number; // 文本行数
+  expandable?: boolean; // 是否展开，用于设置文本的展开or折叠状态
+  suffix?: string; // 省略符号之后要显示的后缀(如suffix为'--苏轼 '， 一蓑烟雨任平生...--苏轼 )
+  symbol?: React.ReactNode; // expandedIcon即展开文本的符号，默认为文本'Expand'，单击后触发expand事件
+  onExpand?: React.MouseEventHandler<HTMLElement>; // 展开(显示所有)文本的回调函数
+  onEllipsis?: (ellipsis: boolean) => void; // 折叠(省略某些)文本的回调函数
   tooltip?: React.ReactNode | TooltipProps;
 }
 
