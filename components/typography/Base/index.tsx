@@ -163,7 +163,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
   ]);
 
   // ========================== Copyable ==========================
-  const [enableCopy, copyConfig] = useMergedConfig<CopyConfig>(copyable);
+  const [enableCopy, copyConfig] = useMergedConfig<CopyConfig>(copyable); // 是否可复制文本，默认false
   const [copied, setCopied] = useState(false);
   const copyIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -193,10 +193,10 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
   useEffect(() => cleanCopyId, []);
 
   // ========================== Ellipsis ==========================
-  const [isLineClampSupport, setIsLineClampSupport] = useState(false);
-  const [isTextOverflowSupport, setIsTextOverflowSupport] = useState(false);
+  const [isLineClampSupport, setIsLineClampSupport] = useState(false); // 是否支持CSS的 -webkit-line-clamp 属性
+  const [isTextOverflowSupport, setIsTextOverflowSupport] = useState(false); // 是否支持CSS的 text-overflow 属性
 
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(false); // 默认为false即不展开所有文本，单击expandIcon可切换true或false
   const [isJsEllipsis, setIsJsEllipsis] = useState(false);
   const [isNativeEllipsis, setIsNativeEllipsis] = useState(false);
   const [isNativeVisible, setIsNativeVisible] = useState(false);
@@ -206,10 +206,11 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
       expandable: false,
     }
   );
-  const mergedEnableEllipsis = enableEllipsis && !expanded;
+  const mergedEnableEllipsis = enableEllipsis && !expanded; // 是否需要开启文本省略（默认为true）
 
-  const { rows = 1 } = ellipsisConfig;
+  const { rows = 1 } = ellipsisConfig; // 文本默认显示行数为1
 
+  // 是否需要计算省略相关信息（初始情况为false）
   const needMeasureEllipsis = useMemo(
     () =>
       !mergedEnableEllipsis ||
@@ -220,6 +221,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
     [mergedEnableEllipsis, ellipsisConfig, enableCopy]
   );
 
+  // 开启省略且无需计算时，查询浏览器是否支持CSS实现省略的相关属性
   useIsomorphicLayoutEffect(() => {
     if (enableEllipsis && !needMeasureEllipsis) {
       setIsLineClampSupport(isStyleSupport("webkitLineClamp"));
@@ -227,30 +229,36 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
     }
   }, [needMeasureEllipsis, enableEllipsis]);
 
+  // 是否能够采用CSS的方式实现单行or多行文本溢出省略
   const cssEllipsis = useMemo(() => {
     if (needMeasureEllipsis) {
+      // 涉及计算操作时不能使用CSS实现文本溢出省略
       return false;
     }
 
     if (rows === 1) {
+      // 单行文本时，若浏览器支持CSS的text-overflow属性，则可以使用该CSS方法实现【单行】文本溢出省略
       return isTextOverflowSupport;
     }
 
+    // 多行文本时，若浏览器支持CSS的-webkit-line-clamp属性，则可以使用该CSS方法实现【多行】文本溢出省略
     return isLineClampSupport;
   }, [needMeasureEllipsis, rows, isTextOverflowSupport, isLineClampSupport]);
 
-  // const isMergedEllipsis = mergedEnableEllipsis && (cssEllipsis ? isNativeEllipsis : isJsEllipsis);
   const cssTextOverflow = mergedEnableEllipsis && rows === 1 && cssEllipsis;
   const cssLineClamp = mergedEnableEllipsis && rows > 1 && cssEllipsis;
+  // const isMergedEllipsis = mergedEnableEllipsis && (cssEllipsis ? isNativeEllipsis : isJsEllipsis);
 
-  // >>>>> Expand
+  // click展开按钮事件处理函数，显示所有文本(不省略或折叠)
   const onExpandClick: React.MouseEventHandler<HTMLElement> = (e) => {
     setExpanded(true);
     ellipsisConfig.onExpand?.(e);
   };
 
+  // 处理文本的父容器窗口大小改动resize
   const [ellipsisWidth, setEllipsisWidth] = React.useState(0);
   const [ellipsisFontSize, setEllipsisFontSize] = React.useState(0);
+
   const onResize = (
     { offsetWidth }: { offsetWidth: number },
     element: HTMLElement
@@ -261,23 +269,26 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
     );
   };
 
-  // >>>>> JS Ellipsis
+  //【JS Ellipsis】事件回调函数，当 jsEllipsis 状态变化时(如展开或折叠文本)，触发onEllipsis回调函数
   const onJsEllipsis = (jsEllipsis: boolean) => {
     setIsJsEllipsis(jsEllipsis);
 
     if (isJsEllipsis !== jsEllipsis) {
-      ellipsisConfig.onEllipsis?.(jsEllipsis); // 状态不同则触发回调
+      // jsEllipsis状态变化 -> 触发回调onEllipsis
+      ellipsisConfig.onEllipsis?.(jsEllipsis);
     }
   };
 
-  // >>>>> Native Ellipsis
+  // 【Native Ellipsis Effect】用于更新 isNativeEllipsis 状态，判断是否为原生隐藏溢出文本的方法
   useEffect(() => {
-    const textEle = typographyRef.current;
+    const textEle = typographyRef.current; // 文本的父容器节点
 
     if (enableEllipsis && cssEllipsis && textEle) {
+      // 可以采用CSS方法实现文本溢出隐藏(此时if中的cssEllipsis为true)
       const currentEllipsis = cssLineClamp
         ? textEle.offsetHeight < textEle.scrollHeight
         : textEle.offsetWidth < textEle.scrollWidth;
+
       if (isNativeEllipsis !== currentEllipsis) {
         setIsNativeEllipsis(currentEllipsis);
       }
@@ -287,14 +298,15 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
     cssEllipsis,
     cssLineClamp,
     isNativeEllipsis,
-    isNativeVisible, // addition
+    isNativeVisible, // (暂时无用，可删除)
     children,
     ellipsisWidth,
   ]);
 
   // https://github.com/ant-design/ant-design/issues/36786
   // Use IntersectionObserver to check if element is invisible
-  React.useEffect(() => {
+  // 查阅文本节点(typographyRef.current)是否可见
+  useEffect(() => {
     const textEle = typographyRef.current;
     if (
       typeof IntersectionObserver === "undefined" ||
@@ -306,7 +318,8 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
     }
 
     const observer = new IntersectionObserver(() => {
-      setIsNativeVisible(!!textEle.offsetParent); // 文本父容器出现即可见
+      // 如果元素是隐藏的，则textEle.offsetParent为null，否则说明元素可见
+      setIsNativeVisible(!!textEle.offsetParent);
     });
     observer.observe(textEle!);
 
@@ -315,9 +328,8 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
     };
   }, [cssEllipsis, mergedEnableEllipsis]);
 
-  // =========================== Render ===========================
-  // >>>>>>>>>>> Typography
-  // Expand
+  // =========================== Generate Content ===========================
+  // Expand Node
   const renderExpand = () => {
     const { expandable, symbol } = ellipsisConfig;
 
@@ -341,7 +353,7 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
     );
   };
 
-  // Copy
+  // Copy Node
   const renderCopy = () => {
     if (!enableCopy) {
       return null;
@@ -380,45 +392,39 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
     // renderEdit(),
   ];
 
+  // Ellipsis content Array 一个具备省略操作的节点的组成成分，数组每一项表示待渲染的项目内容
   const renderEllipsis = (needEllipsis: boolean) => [
+    // 第1项：省略符号(默认为字符串'...')
     needEllipsis && (
       <span aria-hidden key="ellipsis">
         {ELLIPSIS_STR}
       </span>
     ),
+    // 第2项：省略后缀(如'xxxxxxx...-苏轼'中的'-苏轼'就是suffix，它跟在省略符号之后)
     ellipsisConfig.suffix,
+    // 第3项：渲染其他操作节点，如展开按钮expandedIcon(默认是文本'Expand')，以及copyIcon
     renderOperations(needEllipsis),
   ];
 
-  // >>>>> Base
-  const typographyClasses = classNames(className, {
-    [`${prefixCls}-${type}`]: type,
-    [`${prefixCls}-disabled`]: disabled,
-    [`${prefixCls}-ellipsis`]: enableEllipsis,
-    [`${prefixCls}-single-line`]: mergedEnableEllipsis && rows === 1,
-    [`${prefixCls}-ellipsis-single-line`]: cssTextOverflow,
-    [`${prefixCls}-ellipsis-multiple-line`]: cssLineClamp,
-  });
-  const typographyStyle: React.CSSProperties = {
-    ...style,
-    WebkitLineClamp: cssLineClamp ? rows : undefined,
-  };
-
-  // 回调函数,
+  // 【渲染函数】调用上方renderXXX相关方法，作为 Ellipsis 组件的children传给它，其内部调用该方法以生成 Ellipsis 组件的渲染内容(后代)
   const ellipsisChildren = (node: React.ReactNode, needEllipsis: boolean) => {
+    // 待渲染的节点
     let renderNode: React.ReactNode = node;
+
+    // 判断node是否具备长度length属性
     const noLengthAttr =
       node === null ||
       node === undefined ||
       typeof node === "boolean" ||
       typeof node === "symbol";
 
+    // 具备length属性，并且需要省略
     if (!noLengthAttr && needEllipsis) {
       renderNode = (
         <span key="show-content" aria-hidden>
           {renderNode}
         </span>
-      ); // 文本节点
+      );
     }
 
     // 装饰node(如封装strong、italic等装饰标签)
@@ -431,6 +437,20 @@ const Base = React.forwardRef<HTMLElement, BlockProps>((props, ref) => {
     );
 
     return wrappedContext;
+  };
+
+  // >>>>> Base Component
+  const typographyClasses = classNames(className, {
+    [`${prefixCls}-${type}`]: type,
+    [`${prefixCls}-disabled`]: disabled,
+    [`${prefixCls}-ellipsis`]: enableEllipsis,
+    [`${prefixCls}-single-line`]: mergedEnableEllipsis && rows === 1,
+    [`${prefixCls}-ellipsis-single-line`]: cssTextOverflow,
+    [`${prefixCls}-ellipsis-multiple-line`]: cssLineClamp,
+  });
+  const typographyStyle: React.CSSProperties = {
+    ...style,
+    WebkitLineClamp: cssLineClamp ? rows : undefined,
   };
 
   return (
